@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Easy Chat
+    </title>
+</head>
+
+<body>
+
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        textarea {
+            width: 70vw;
+            height: 12vw;
+            font-size: 10vw;
+        }
+        
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        button {
+            width: 20vw;
+            height: 10vw;
+            font-size: 6vw;
+            margin: 1vw;
+        }
+        
+        #switch>button:first-child {
+            color: crimson;
+        }
+    </style>
+
+    <form>
+        <textarea id="txt" required></textarea>
+        <div id="switch">
+            <button type="button" onclick="chat()">Chat</button>
+            <button type="button" onclick="clears()">Clear</button>
+            <button type="reset" onclick="clears()">Reset</button>
+        </div>
+    </form>
+
+
+
+
+    <table>
+        <tbody>
+            <tr>
+                <td><button id="num" onclick="num('1')">1</button></td>
+                <td><button id="num" onclick="num('2')">2</button></td>
+                <td><button id="num" onclick="num('3')">3</button></td>
+            </tr>
+            <tr>
+                <td><button id="num" onclick="num('4')">4</button></td>
+                <td><button id="num" onclick="num('5')">5</button></td>
+                <td><button id="num" onclick="num('6')">6</button></td>
+            </tr>
+            <tr>
+                <td><button id="num" onclick="num('7')">7</button></td>
+                <td><button id="num" onclick="num('8')">8</button></td>
+                <td><button id="num" onclick="num('9')">9</button></td>
+            </tr>
+            <tr>
+                <td><button></button></td>
+                <td><button id="num" onclick="num('0')">0</button></td>
+                <td><button></button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function num(val) {
+            check = document.getElementById("txt").value;
+            if (check.length < 10) {
+                document.getElementById("txt").value += val;
+            } else {
+                alert("Ten Number only Allow");
+            }
+        }
+
+        function chat() {
+            no = document.getElementById("txt").value;
+            if (no.length === 10) {
+                var pre = "https://wa.me/91";
+                var final = pre + no;
+                window.open(final, "_blank");
+                alert(final);
+            } else {
+                alert("enter ten number");
+            }
+        }
+
+        function clears() {
+            x = document.getElementById("txt").value;
+            y = x.slice(0, -1);
+            document.getElementById("txt").value = y;
+
+        }
+    </script>
+
+
+
+</body>
+
+</html>
