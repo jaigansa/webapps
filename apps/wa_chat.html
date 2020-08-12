@@ -29,22 +29,29 @@
         }
         
         button {
-            width: 20vw;
-            height: 10vw;
-            font-size: 6vw;
+            width: 10vw;
+            height: 5vw;
+            font-size: 3vw;
             margin: 1vw;
         }
         
         #switch>button:first-child {
             color: crimson;
         }
+        
+        @media only screen and (max-width: 600px) {
+            button {
+                width: 20vw;
+                height: 10vw;
+                font-size: 6vw;
+            }
+        }
     </style>
 
     <form>
-        <div id="top" ><h1>Easy WA Chat</h1></div>
-        <input id="txt" type="number" pattern="[0-9]{10}" placeholder="##########">
+        <input id="txt" type="number" pattern="[0-9]{10}" placeholder="##########" required size="9" title="Ten Number Enter">
         <div id="switch">
-            <button type="button" onclick="chat()">Chat</button>
+            <button type="submit" onclick="chat()">Chat</button>
             <button type="button" onclick="clears()">Clear</button>
             <button type="reset" onclick="clears()">Reset</button>
         </div>
@@ -80,7 +87,7 @@
 
     <script>
         function num(val) {
-                document.getElementById("txt").value += val;
+            document.getElementById("txt").value += val;
         }
 
         function chat() {
