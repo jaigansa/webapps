@@ -57,8 +57,9 @@ input:valid {
             margin: 1vw;
         }
         
-        #switch>button:first-child {
+        #switch>button {
             color: crimson;
+Width:50vw;
         }
         
         @media only screen and (max-width: 600px) {
@@ -82,8 +83,7 @@ input:valid {
         <input id="txt" type="tel" pattern="[0-9]{10}" placeholder="Mobile no" required size="9" title="Ten Number Enter">
         <div id="switch">
             <button type="submit" onclick="chat()">Chat</button>
-            <button type="button" onclick="clears()">Clear</button>
-            <button type="reset" onclick="clears()">Reset</button>
+            
         </div>
     </form>
 
@@ -108,9 +108,9 @@ input:valid {
                 <td><button id="num" onclick="num('9')">9</button></td>
             </tr>
             <tr>
-                <td><button></button></td>
+                <td><button type="reset" onclick="clears()">Reset</button></td>
                 <td><button id="num" onclick="num('0')">0</button></td>
-                <td><button></button></td>
+                <td><button type="button" onclick="clears()">Clear</button></td>
             </tr>
         </tbody>
     </table>
