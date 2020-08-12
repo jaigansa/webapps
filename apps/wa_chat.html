@@ -34,6 +34,11 @@
             user-select: none;
         }
         
+        input:invalid {
+            border: red solid 3px;
+            border-radius: 25px;
+        }
+        
         table {
             margin-left: auto;
             margin-right: auto;
@@ -68,7 +73,7 @@
         <div id="headname">
             <h1>Easy WA Chat</h1>
         </div>
-        <input id="txt" type="number" pattern="[0-9]{10}" placeholder="##########" required size="9" title="Ten Number Enter">
+        <input id="txt" type="tel" pattern="[0-9]{10}" placeholder="Mobile no" required size="9" title="Ten Number Enter">
         <div id="switch">
             <button type="submit" onclick="chat()">Chat</button>
             <button type="button" onclick="clears()">Clear</button>
