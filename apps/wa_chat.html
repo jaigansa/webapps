@@ -2,8 +2,8 @@
 <html>
 
 <head>
-    
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
         Easy Chat
@@ -13,6 +13,11 @@
 <body>
 
     <style>
+        #headname {
+            font-family: arial, 'sanserif';
+            color: green;
+        }
+        
         form {
             display: flex;
             flex-direction: column;
@@ -22,8 +27,10 @@
         
         input {
             width: 70vw;
-            height: 12vw;
+            height: 10vw;
             font-size: 10vw;
+            margin-bottom: 25px;
+            border: none;
         }
         
         table {
@@ -42,16 +49,24 @@
             color: crimson;
         }
         
-        @media only screen and (max-width: 500px) {
+        @media only screen and (max-width: 600px) {
+            input {
+                width: 90vw;
+                height: 20vw;
+                font-size: 15vw;
+            }
             button {
-                width: 20vw;
-                height: 10vw;
-                font-size: 6vw;
+                width: 25vw;
+                height: 15vw;
+                font-size: 5vw;
             }
         }
     </style>
 
     <form>
+        <div id="headname">
+            <h1>Easy WA Chat</h1>
+        </div>
         <input id="txt" type="number" pattern="[0-9]{10}" placeholder="##########" required size="9" title="Ten Number Enter">
         <div id="switch">
             <button type="submit" onclick="chat()">Chat</button>
