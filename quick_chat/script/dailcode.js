@@ -1229,4 +1229,4 @@ function dailcodeIns() {
     }
 
 };
-dailcodeIns()
+dailcodeIns();
