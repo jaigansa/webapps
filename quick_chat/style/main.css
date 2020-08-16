@@ -17,6 +17,12 @@ body {
     margin-bottom: 5vw;
 }
 
+#dCode {
+    width: 50vw;
+    height: 10vw;
+    border: none;
+}
+
 .title-a {
     flex-grow: 1;
     font-size: 5vw;
