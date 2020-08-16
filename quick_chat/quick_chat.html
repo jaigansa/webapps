@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/cotton/64/000000/whatsapp--v2.png">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -10,15 +11,14 @@
     </title>
 
     <!--Internal Links-->
-    <link href="style/main.css" rel="stylesheet" />
+    <link href="style/main.css" rel="stylesheet">
+
     <!-- External Links-->
     <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
-
-
 
     <form>
         <div id="name-a">
@@ -28,7 +28,7 @@
             </div>
 
             <div class="send-a">
-                <button id="send" type="submit" onclick="chat()">
+                <button id="send" onclick="chat_open()">
                     <span class="material-icons">
                         send
                      </span></button>
@@ -37,7 +37,17 @@
         </div>
 
         <div id="userin">
-            <input id="telphone" class="number" type="tel" pattern="[0-9]{10}" placeholder="Mobile no" required size="9" title="Type Ten Numbers!">
+            <select id="dCode" onload="dailcodeIns()">
+                <optgroup name="Recent" label="Recents">
+                <option data-countryCode="IN" value="91" Selected>INDIA (+91)</option>
+	            <option data-countryCode="US" value="1">USA (+1)</option>
+            </optgroup>
+            <optgroup name="All" id="allcode"  label="All countries">
+
+            </optgroup>
+            </select>
+
+            <input type="tel" id="cellnum" class="number" onkeyup="cellnumonly(this)" maxlength="10" pattern="\d{10}" required title="Type Ten Numbers!" placeholder="Mobile no" />
         </div>
 
 
@@ -49,28 +59,28 @@
     <table>
         <tbody>
             <tr>
-                <td><button id="num" onclick="num('1')">1</button></td>
-                <td><button id="num" onclick="num('2')">2</button></td>
-                <td><button id="num" onclick="num('3')">3</button></td>
+                <td><button id="num" onclick="num( '1')">1</button></td>
+                <td><button id="num" onclick="num( '2')">2</button></td>
+                <td><button id="num" onclick="num( '3')">3</button></td>
             </tr>
             <tr>
-                <td><button id="num" onclick="num('4')">4</button></td>
-                <td><button id="num" onclick="num('5')">5</button></td>
-                <td><button id="num" onclick="num('6')">6</button></td>
+                <td><button id="num" onclick="num( '4')">4</button></td>
+                <td><button id="num" onclick="num( '5')">5</button></td>
+                <td><button id="num" onclick="num( '6')">6</button></td>
             </tr>
             <tr>
-                <td><button id="num" onclick="num('7')">7</button></td>
-                <td><button id="num" onclick="num('8')">8</button></td>
-                <td><button id="num" onclick="num('9')">9</button></td>
+                <td><button id="num" onclick="num( '7')">7</button></td>
+                <td><button id="num" onclick="num( '8')">8</button></td>
+                <td><button id="num" onclick="num( '9')">9</button></td>
             </tr>
             <tr>
                 <td><button id="resetbut" type="reset" onclick="allclear()">
-                    <span class="material-icons ">
+                    <span class="material-icons">
                         clear
                         </span>
                        </button></td>
 
-                <td><button id="num" onclick="num('0')">0</button></td>
+                <td><button id="num" onclick="num( '0')">0</button></td>
 
                 <td><button id="clearbut" type="button" onclick="clears()">
                     <span class="material-icons">
@@ -82,6 +92,8 @@
     </table>
 
     <script src="script/main.js"></script>
+    <script src="script/dailcode.js"></script>
+
 
 
 </body>
