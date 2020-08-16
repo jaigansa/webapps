@@ -8,86 +8,43 @@
     <title>
         Quick Chat
     </title>
+
+    <!--Internal Links-->
+    <link href="style/main.css" rel="stylesheet" />
+    <!-- External Links-->
+    <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
 
-    <style>
-        #headname {
-            font-family: arial, 'sanserif';
-            color: green;
-        }
-        
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        input {
-            width: 70vw;
-            height: 10vw;
-text-align: center;
-            font-size: 10vw;
-            margin-bottom: 25px;
-            border: none;
-            user-select: none;
-        }
-        
-        input:invalid {
-            border: red solid 3px;
-            border-radius: 50px;
-        }
 
-input:valid {
-            border: blue solid 3px;
-            border-radius: 50px;
-        }
-        
-        table {
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        button {
-            width: 10vw;
-            height: 5vw;
-            font-size: 3vw;
-            margin: 1vw;
-        }
-        
-        #switch>button {
-            color: crimson;
-Width:50vw;
-        }
-        
-        @media only screen and (max-width: 600px) {
-            input {
-                width: 90vw;
-                height: 20vw;
-                font-size: 15vw;
-            }
-            button {
-                width: 25vw;
-                height: 15vw;
-                font-size: 5vw;
-            }
-        }
-    </style>
 
     <form>
-        <div id="headname">
-            <h1>Quick-WA-Chat</h1>
+        <div id="name-a">
+            <div class="title-a">
+                <h1>Quick Chat</h1>
+                <p>WhatsApp</p>
+            </div>
+
+            <div class="send-a">
+                <button id="send" type="submit" onclick="chat()">
+                    <span class="material-icons">
+                        send
+                     </span></button>
+            </div>
+
         </div>
-        <input id="txt" type="tel" pattern="[0-9]{10}" placeholder="Mobile no" required size="9" title="Ten Number Enter">
-        <div id="switch">
-            <button type="submit" onclick="chat()">Chat</button>
-            
+
+        <div id="userin">
+            <input id="telphone" class="number" type="tel" pattern="[0-9]{10}" placeholder="Mobile no" required size="9" title="Type Ten Numbers!">
         </div>
+
+
     </form>
 
-
+    <textarea id="txt" onkeyup="textAreaAdjust(this)" style="overflow:hidden" placeholder="Message..." rows="1" cols="30">
+    </textarea>
 
 
     <table>
@@ -108,43 +65,24 @@ Width:50vw;
                 <td><button id="num" onclick="num('9')">9</button></td>
             </tr>
             <tr>
-                <td><button type="reset" onclick="allclear()">Reset</button></td>
+                <td><button id="resetbut" type="reset" onclick="allclear()">
+                    <span class="material-icons ">
+                        clear
+                        </span>
+                       </button></td>
+
                 <td><button id="num" onclick="num('0')">0</button></td>
-                <td><button type="button" onclick="clears()">Clear</button></td>
+
+                <td><button id="clearbut" type="button" onclick="clears()">
+                    <span class="material-icons">
+                        backspace
+                        </span>
+                    </button></td>
             </tr>
         </tbody>
     </table>
 
-    <script>
-        function num(val) {
-            document.getElementById("txt").value += val;
-        }
-
-        function chat() {
-            no = document.getElementById("txt").value;
-            if (no.length === 10) {
-                var pre = "https://wa.me/91";
-                var final = pre + no;
-                window.open(final, "_blank");
-                alert(final);
-            } else {
-                alert("enter ten number");
-            }
-        }
-
-        function clears() {
-            x = document.getElementById("txt").value;
-            y = x.slice(0, -1);
-            document.getElementById("txt").value = y;
-
-        }
-
-function allclear(){
-
-document.getElementById("txt").value = "";
-}
-    </script>
-
+    <script src="script/main.js"></script>
 
 
 </body>
