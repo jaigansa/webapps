@@ -19,15 +19,17 @@
 </head>
 
 <body>
+    <div id="MainSection">
 
-    <form>
-        <div id="name-a">
-            <div class="title-a">
+
+        <div Class="topbar">
+
+            <div class="title">
                 <h1>Quick Chat</h1>
                 <p>WhatsApp</p>
             </div>
 
-            <div class="send-a">
+            <div class="send">
                 <button id="send" onclick="chat_open()">
                     <span class="material-icons">
                         send
@@ -36,60 +38,64 @@
 
         </div>
 
-        <div id="userin">
-            <select id="dCode" onload="dailcodeIns()" style="width:50vw;">
+        <div class="display">
+            <!-- Select Dail Country Code-->
+            <select name="dailcode" id="dCode" onload="dailcodeIns()">
                 <optgroup name="Recent" label="Recents">
                 <option data-countryCode="IN" value="91" Selected>INDIA (+91)</option>
 	            <option data-countryCode="US" value="1">USA (+1)</option>
             </optgroup>
             <optgroup name="All" id="allcode"  label="All countries">
-
+                <!--Js add Code here-->
             </optgroup>
             </select>
+            <!-- Mobile Number Input -->
+            <input type="tel" id="display" class="number" onkeyup="digitonly(this)" maxlength="10" pattern="\d{10}" required title="Type Ten Numbers!" placeholder="Mobile no" />
 
-            <input type="tel" id="cellnum" class="number" onkeyup="cellnumonly(this)" maxlength="10" pattern="\d{10}" required title="Type Ten Numbers!" placeholder="Mobile no" />
         </div>
 
+        <!-- Message Input-->
 
-    </form>
+        <textarea id="txt" onkeyup="textAreaAdjust(this)" style="overflow:hidden" placeholder="Message..." rows="1" cols="30"></textarea>
 
-    <textarea id="txt" onkeyup="textAreaAdjust(this)" style="overflow:hidden" placeholder="Message..." rows="1" cols="30"></textarea>
-
-
-    <table>
-        <tbody>
-            <tr>
-                <td><button id="num" onclick="num( '1')">1</button></td>
-                <td><button id="num" onclick="num( '2')">2</button></td>
-                <td><button id="num" onclick="num( '3')">3</button></td>
-            </tr>
-            <tr>
-                <td><button id="num" onclick="num( '4')">4</button></td>
-                <td><button id="num" onclick="num( '5')">5</button></td>
-                <td><button id="num" onclick="num( '6')">6</button></td>
-            </tr>
-            <tr>
-                <td><button id="num" onclick="num( '7')">7</button></td>
-                <td><button id="num" onclick="num( '8')">8</button></td>
-                <td><button id="num" onclick="num( '9')">9</button></td>
-            </tr>
-            <tr>
-                <td><button id="resetbut" type="reset" onclick="allclear()">
+        <!-- Number Buttons -->
+        <table>
+            <tbody>
+                <tr>
+                    <td><button id="num" onclick="num( '1')">1</button></td>
+                    <td><button id="num" onclick="num( '2')">2</button></td>
+                    <td><button id="num" onclick="num( '3')">3</button></td>
+                </tr>
+                <tr>
+                    <td><button id="num" onclick="num( '4')">4</button></td>
+                    <td><button id="num" onclick="num( '5')">5</button></td>
+                    <td><button id="num" onclick="num( '6')">6</button></td>
+                </tr>
+                <tr>
+                    <td><button id="num" onclick="num( '7')">7</button></td>
+                    <td><button id="num" onclick="num( '8')">8</button></td>
+                    <td><button id="num" onclick="num( '9')">9</button></td>
+                </tr>
+                <tr>
+                    <td><button id="resetbut" type="reset" onclick="allclear()">
                     <span class="material-icons">
                         clear
                         </span>
                        </button></td>
 
-                <td><button id="num" onclick="num( '0')">0</button></td>
+                    <td><button id="num" onclick="num( '0')">0</button></td>
 
-                <td><button id="clearbut" type="button" onclick="clears()">
+                    <td><button id="clearbut" type="button" onclick="clears()">
                     <span class="material-icons">
                         backspace
                         </span>
                     </button></td>
-            </tr>
-        </tbody>
-    </table>
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
 
     <script src="script/main.js"></script>
     <script src="script/dailcode.js"></script>
