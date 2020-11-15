@@ -1,0 +1,20 @@
+
+{
+    "handtools": {
+        "Hammers": 10,
+        "Spanners": 20,
+        "Jackes": 20,
+        "Horses": 20
+    },
+    "powertools": {
+        "Drill_Machine": 10,
+        "Grinding_Machine": 10,
+        "Cut-off_Machine": 10
+    },
+    "heavytools": {
+        "Welding_Machine": 20,
+        "Tabel_Grinding": 20,
+        "Tabel_Drilling": 20,
+        "Lathe": 100
+    }
+}

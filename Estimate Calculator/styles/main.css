@@ -1,0 +1,50 @@
+/*import fonts*/
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Text:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+#main-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+#appname > h1{
+    color: #ffffff;
+    font-family: 'Big Shoulders Stencil Text', cursive;
+    font-size: 7vw;
+    margin: 1vw;
+
+}
+
+label{
+    color: floralwhite;
+    font-size: 4vw;
+    text-transform: uppercase;
+    margin-top: 3vh;
+}
+
+.tabs{
+    display: flex;
+    flex-direction: column;
+}
+select{
+    border: none;
+    size: 5vw;
+
+}
+input{
+    border: none;
+}
+
+#toolselect{
+    display: none;
+}
+body{
+    background-color: darkblue;
+    color: darkorange;
+    font-family: 'Roboto', sans-serif;
+    font-size: 2vw;
+    margin: 0;
+    padding: 0;
+}
