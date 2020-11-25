@@ -38,7 +38,8 @@ function chat_open() {
         newtxt = encodeURI(txt);
         final = pre + dcod + cn + addtext + newtxt;
         //alert(final);
-        window.open(final, "_blank", params);
+        var win = window.open(final, "_blank", params);
+        win.focus();
         //location.href = final;
         //location.replace(final);
     } else {
