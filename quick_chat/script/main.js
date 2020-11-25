@@ -37,7 +37,8 @@ function chat_open() {
         final = pre + dcod + cn + addtext + newtxt;
         //alert(final);
         //window.open(final, "_self");
-        location.href = final;
+        //location.href = final;
+        location.replace(final);
     } else {
         alert("enter ten number");
     }
