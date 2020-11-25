@@ -23,8 +23,8 @@ function digitonly(input) {
 // chat button
 
 //variable 
-const pre = "https://wa.me/";
-const addtext = "?text=";
+const pre = "https://api.whatsapp.com/send?phone=";
+const addtext = "&text=";
 // get datas
 
 function chat_open() {
