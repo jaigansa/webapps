@@ -25,6 +25,8 @@ function digitonly(input) {
 //variable 
 const pre = "https://api.whatsapp.com/send?phone=";
 const addtext = "&text=";
+let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
+width=0,height=0,left=-1000,top=-1000`;
 // get datas
 
 function chat_open() {
@@ -36,9 +38,9 @@ function chat_open() {
         newtxt = encodeURI(txt);
         final = pre + dcod + cn + addtext + newtxt;
         //alert(final);
-        //window.open(final, "_self");
+        window.open(final, "_blank", params);
         //location.href = final;
-        location.replace(final);
+        //location.replace(final);
     } else {
         alert("enter ten number");
     }
