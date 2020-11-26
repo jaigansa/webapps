@@ -2,49 +2,70 @@
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Text:wght@800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-#main-page{
+#main-page {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
 }
 
-#appname > h1{
+#appname > h1 {
     color: #ffffff;
     font-family: 'Big Shoulders Stencil Text', cursive;
     font-size: 7vw;
     margin: 1vw;
+    text-align: center;
 
 }
 
-label{
+label {
     color: floralwhite;
     font-size: 4vw;
     text-transform: uppercase;
     margin-top: 3vh;
 }
 
-.tabs{
+.tabs {
     display: flex;
     flex-direction: column;
 }
-select{
+
+select {
     border: none;
     size: 5vw;
 
 }
-input{
+
+input {
     border: none;
 }
 
-#toolselect{
+#toolselect {
     display: none;
 }
-body{
+
+body {
     background-color: darkblue;
     color: darkorange;
     font-family: 'Roboto', sans-serif;
     font-size: 2vw;
     margin: 0;
     padding: 0;
+}
+
+
+/* Responsive Style */
+
+
+@media only screen and (max-width:600px) {
+    body {
+        background-color: red;
+    }
+
+    
+    #appname > h1 {
+        font-size: 10vw;
+        margin: .5vw;
+    }
+
 }

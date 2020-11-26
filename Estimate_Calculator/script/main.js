@@ -1,4 +1,4 @@
-console.log("Connected main.js File");
+console.log("***Connected main.js File***");
 
 /* code is title section */
 
