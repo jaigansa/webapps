@@ -1,3 +1,3 @@
 # web
-Simple web app Practice
-[link](https://jaigansa.github.io/web)
+Simple Web Application
+# [OPEN](https://jaigansa.github.io/web)
