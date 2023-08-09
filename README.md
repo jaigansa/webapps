@@ -6,4 +6,4 @@
 > 3.color platte*
 
   
-# [CLICK HERE!](https://jaigansa.github.io/webapp)
+# [CLICK HERE!](https://jaigansa.github.io/WebApps)
