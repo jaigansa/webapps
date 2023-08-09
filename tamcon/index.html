@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TAM-CON</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Tamil Unicode converter supports to convert the words or document into Unicode to Bhamini , Tab , Tscii. This appliction is user-friendly and the user can use very easily." />
+    <meta name="author" content="" />
+
+    <!-- Internal Links -->
+    <link rel="stylesheet" href="styles/main.css" />
+    <script src="js/main.js"></script>
+    <script src="js/trans.js"></script>
+
+    <!-- External Links-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Montserrat:wght@900" rel="stylesheet" />
+</head>
+
+<body>
+    <h1>
+        Tamil Fonts Converter
+    </h1>
+    <form>
+        <h2>Input - Paste or Type</h2>
+        <textarea id="sourceText" placeholder="Write here" class="source_box" autofocus></textarea>
+        <h2>Output - Select and Copy </h2>
+        <textarea id="targetText" placeholder="Copy here" class="target_here" readonly></textarea>
+
+        <div id="switch-section">
+
+            <div class="convertSwitch">
+                <button class="fancy-button" type="button" onclick="getbamini()">UNICODE <i class="material-icons "> double_arrow </i> BAMINI</button>
+                <button class="fancy-button" type="button" onclick="gettscii()">UNICODE <i class="material-icons "> double_arrow </i> TSCII</button>
+                <button class="fancy-button" type="button" onclick="gettab() ">UNICODE <i class="material-icons "> double_arrow </i> TAB</button>
+            </div>
+
+            <div class="clear-copy">
+                <button class="fancy-button" type="button" id="clear" onclick="cleardata()"> <i class="material-icons"> backspace </i> CLEAR</button>
+                <button class="fancy-button" type="button" id="copy" onclick="copydata()"> <i class="material-icons"> content_copy </i> COPY</button>
+            </div>
+
+            <div class="reset">
+                <button class="fancy-button" type="reset" id="reset" onclick="resetdata()"> <i class="material-icons"> refresh</i> RESET</button>
+            </div>
+        </div>
+    </form>
+    <footer>
+        <div>
+            <h3>ThankYou</h3>
+        </div>
+    </footer>
+</body>
+
+</html>
