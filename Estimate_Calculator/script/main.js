@@ -24,10 +24,11 @@ var display = document.getElementById("output");
 // get work type
 
 function calculate() {
+    reset();
 
     profit = workhrs.value * workamt.value * persons.value * profitpercent; // profit add 25prercent
     results = workhrs.value * workamt.value * persons.value + profit;
-    display.innerHTML = "<h1>Price: " + results + "</h1>";
+    display.innerHTML = results + ".00/-";
 
 }
 function reset() {
