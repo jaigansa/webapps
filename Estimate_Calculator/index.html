@@ -30,6 +30,15 @@
       </div>
       <div class="card-body">
 
+           <div id="typeofwork" class="mb-3">
+          <label for="worktype">WorkType</label><br>
+          <select class="work-type form-control" id="worktype" name="work">
+            <option selected disabled value="">choose</option>
+            <option value="1">Labour</option>
+            <option value="2">Labour + Tools</option>
+            <option value="3">Labour + Tools + Material</option>
+          </select>
+        </div>
 
         <div id="time" class="mb-3">
           <label for="workHrs">Work Hours</label><br>
@@ -43,19 +52,9 @@
         <div id="person" class="mb-3">
           <label for="noofperson">No.of.Person</label><br>
           <input id="noofperson" class="form-control" type="number" min="1" step="1" max="10" placeholder="0">
-
-
         </div>
 
-        <div id="typeofwork" class="mb-3">
-          <label for="worktype">WorkType</label><br>
-          <select class="work-type form-control" id="worktype" name="work">
-            <option selected disabled value="">choose</option>
-            <option value="1">Labour</option>
-            <option value="2">Labour + Tools</option>
-            <option value="3">Labour + Tools + Material</option>
-          </select>
-        </div>
+     
 
 
         <div class="d-grid gap-3">
