@@ -33,6 +33,7 @@
     color: #666;
   }
   .input-container {
+    width: fit-content;
     position: relative;
     margin-bottom: 15px;
   }
@@ -70,11 +71,15 @@
 <body>
 <div class="container">
   <h1>Labor Estimation App</h1>
+
   <label for="hours">Enter Hours:</label>
+
   <div class="input-container">
     <input type="number" id="hours" min="1" step="0.5" required>
     <span class="input-icon">hrs</span>
   </div>
+
+
   <label for="hourlyRate">Enter Hourly Rate (₹):</label>
   <div class="input-container">
     <input type="number" id="hourlyRate" min="0" step="1" required>

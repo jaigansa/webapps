@@ -1,17 +1,17 @@
 console.log("***Connected main.js File***");
 
-/* code is title section */
+/* Import title */
 
 var title = document.getElementById("appname");
-var title_text = "Estimate Calculator";
+var title_text = "Labour Estimate";
 title.innerHTML = "<h1>" + title_text + "</h1>";
-title.style.cssText = "border: 1vw solid #fff; padding: 2vw; "; //title border
+title.style.cssText = " "; //title border
 
 //get user informations
 
 var workhrs = document.getElementById("workHrs");
 var persons = document.getElementById("noofperson");
-let profitpercent = 25 / 100; //profit of work
+let profitpercent = 0.25; //profit of work
 
 //get document Elements
 

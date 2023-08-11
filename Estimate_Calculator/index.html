@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="manifest" href="favicon/site.webmanifest">
-  <title>Estimate Calculator</title>
+  <title>Estimate</title>
   <meta content="">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    crossorigin="anonymous">
+
   <style></style>
 
   <link rel="stylesheet" href="styles/main.css">
@@ -15,63 +19,53 @@
 </head>
 
 <body>
-<section id=appname>
-</section>
+  <div class="d-flex  justify-content-center align-items-center vh-100">
+
+    <div class="card  ">
+
+      <div class="card-header">
+
+        <section id=appname>
+        </section>
+      </div>
+      <div class="card-body">
+
+        <div id="time" class="tabs">
+          <label for="workHrs">Work Hours</label><br>
+          <input id="workHrs" class="form-control" type="number" min="1" step="1" max="100" placeholder="0">
+        </div>
+
+        <div id="person" class="tabs">
+          <label for="noofperson">No.of.Person</label><br>
+          <input id="noofperson" class="form-control" type="number" min="1" step="1" max="10" placeholder="0">
 
 
+        </div>
 
+        <div id="typeofwork" class="tabs">
+          <label for="worktype">WorkType</label><br>
+          <select class="worktype form-control" id="work-type" name="work" onchange="workType()">
+            <option selected disabled value="">Select</option>
+            <option value="1">Labour</option>
+            <option value="2">Labour + Tools</option>
+            <option value="3">Labour + Tools + Material</option>
+          </select>
+        </div>
 
+        <div id="tools" class="tabs">
+          <label for="toolselect" id="tools_title"></label>
+          <select id="toolselect" class="form-control" onchange="typetools()"></select>
+        </div>
 
+        <button type="submit" class="btn btn-primary mt-200 w-100" onclick="workType()">Calculate</button>
 
+        <div id="output">
 
-
-
-
-
-
-
-
-
-
-
-
-
-  <div id="main-page">
-    <div id="time" class="tabs">
-      <label for="workHrs">Work Hours</label><br>
-      <input type="number" id="workHrs" min="1" max="240" pattern="[1-9]" placeholder="hours">
+        </div>
+      </div>
     </div>
 
 
-
-    <div id="person" class="tabs">
-      <label for="noofperson">No.of.Person</label><br>
-      <select id="noofperson" >
-        <option value="100" name="Person">ONE</option>
-        <option value="200" name="Person">TWO</option>
-        <option value="300" name="Person">THREE</option>
-        <option value="400" name="Person">FOUR</option>
-      </select>
-    </div>
-
-    <div id="typeofwork" class="tabs">
-      <label for="worktype">WorkType</label><br>
-      <select class="worktype" id="work-type" name="work" onchange="workType()">
-        <option selected disabled value="">Select</option>
-        <option value="1" >Labour</option>
-        <option value="2" >Labour + Tools</option>
-        <option  value="3" >Labour + Tools + Material</option>
-      </select>
-    </div>
-
-    <div id="tools" class="tabs">
-      <label for="toolselect" id="tools_title"></label>
-      <select  id="toolselect" onchange="typetools()"></select>   
-    </div>
-
-    <div id="output">
-
-    </div>
     <script rel="preload" type="text/javascript" async src="script/main.js"></script>
 </body>
 
