@@ -30,38 +30,36 @@
       </div>
       <div class="card-body">
 
-        <div id="time" class="tabs">
+
+        <div id="time" class="mb-3">
           <label for="workHrs">Work Hours</label><br>
           <input id="workHrs" class="form-control" type="number" min="1" step="1" max="100" placeholder="0">
         </div>
 
-        <div id="person" class="tabs">
+        <div id="person" class="mb-3">
           <label for="noofperson">No.of.Person</label><br>
           <input id="noofperson" class="form-control" type="number" min="1" step="1" max="10" placeholder="0">
 
 
         </div>
 
-        <div id="typeofwork" class="tabs">
+        <div id="typeofwork" class="mb-3">
           <label for="worktype">WorkType</label><br>
-          <select class="worktype form-control" id="work-type" name="work" onchange="workType()">
-            <option selected disabled value="">Select</option>
+          <select class="work-type form-control" id="worktype" name="work">
+            <option selected disabled value="">choose</option>
             <option value="1">Labour</option>
             <option value="2">Labour + Tools</option>
             <option value="3">Labour + Tools + Material</option>
           </select>
         </div>
 
-        <div id="tools" class="tabs">
-          <label for="toolselect" id="tools_title"></label>
-          <select id="toolselect" class="form-control" onchange="typetools()"></select>
+
+        <div class="d-grid gap-3">
+          <button class="btn btn-outline-primary" onclick="calculate()" type="button">Calculate</button>
+          <button class="btn btn-primary" onclick="reset()" type="button">Reset</button>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-200 w-100" onclick="workType()">Calculate</button>
-
-        <div id="output">
-
-        </div>
+        <div id="output"> </div>
       </div>
     </div>
 
