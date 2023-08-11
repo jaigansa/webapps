@@ -28,7 +28,7 @@ function calculate() {
 
     profit = workhrs.value * workamt.value * persons.value * profitpercent; // profit add 25prercent
     results = workhrs.value * workamt.value * persons.value + profit;
-    display.innerHTML = results + ".00/-";
+    display.innerHTML = results + "/-";
 
 }
 function reset() {
