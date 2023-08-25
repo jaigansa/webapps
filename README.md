@@ -1,9 +1,6 @@
-# Web Application
-> 1.Whatsapp chat without save number  
-  
-> 2.Working estimate calculator*  
-  
-> 3.color platte*
+# Web Based simple Our learning purpose Applications
 
-  
-# [CLICK HERE!](https://jaigansa.github.io/WebApps)
+## Try this application 
+# [APPS](https://jaigansa.github.io/webapps)
+
+enjoy!!!
