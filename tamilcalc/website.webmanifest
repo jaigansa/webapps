@@ -1,0 +1,25 @@
+ 
+  {
+
+  "short_name": "tamilcalc",
+  "name": "calculator: tamil translate numbers.",
+    "icons": [
+      { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },
+      { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" }
+    ],
+    "description": "calculator informations",
+  "screenshots": [
+    {
+      "src": "assets/png/banner_narrow.png",
+      "type": "image/png",
+      "sizes": "540x720",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "assets/png/banner.png",
+      "type": "image/png",
+      "sizes": "720x540",
+      "form_factor": "wide"
+    }
+  ]
+  }
