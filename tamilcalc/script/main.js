@@ -13,10 +13,12 @@ function display(num) {
 
 function clr() {
     iodisplay.value = "";
+    distam.value = "";
 };
 
 function del() {
     iodisplay.value = iodisplay.value.slice(0, -1);
+    distam.value = distam.value.slice(0,-1);
 };
 
 function calculate() {
