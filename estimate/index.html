@@ -1,73 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+        <link rel="manifest" href="favicon/site.webmanifest">
+        <title>Estimate</title>
+        <meta content="">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-  <link rel="manifest" href="favicon/site.webmanifest">
-  <title>Estimate</title>
-  <meta content="">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
-    crossorigin="anonymous">
+        <style></style>
 
-  <style></style>
+        <link rel="stylesheet" href="styles/main.css">
 
-  <link rel="stylesheet" href="styles/main.css">
+    </head>
 
-</head>
+    <body>
+        <div class="d-flex  justify-content-center align-items-center vh-100">
+            <div class="card  ">
+                <div class="card-header">
+                    <section id="appname"></section>
+                </div>
+                <div class="card-body">
+                    <div id="typeofwork" class="mb-3">
+                        <label for="worktype">WorkType</label><br>
+                        <select class="work-type form-control" id="worktype" name="work">
+                            <option selected disabled value="">choose</option>
+                            <option value="1">Labour</option>
+                            <option value="2">Labour + Tools</option>
+                            <option value="3">Labour + Tools + Material</option>
+                        </select>
+                    </div>
+                    <div id="time" class="mb-3">
+                        <label for="workHrs">Work Hours</label><br>
+                        <input id="workHrs" class="form-control" type="number" min="1" step="1" max="100" placeholder="0">
+                    </div>
+                    <div id="amount" class="mb-3">
+                        <label for="workamount">Amount</label><br>
+                        <input id="workamount" class="form-control" type="number" min="1" step="1" placeholder="0">
+                    </div>
+                    <div id="person" class="mb-3">
+                        <label for="noofperson">No.of.Person</label><br>
+                        <input id="noofperson" class="form-control" type="number" min="1" step="1" max="10" placeholder="0">
+                    </div>
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-outline-primary" onclick="calculate()" type="button" data-bs-toggle="modal" data-bs-target="#resultModal">Calculate</button>
+                        <button class="btn btn-primary" onclick="reset()" type="button">Reset</button>
+                    </div>
+                </div>
+            </div>
 
-<body>
-  <div class="d-flex  justify-content-center align-items-center vh-100">
+            <!-- Modal -->
+            <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Estimate Amount</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div
+                            class="modal-body">
+                            <!-- Result -->
+                            <div id="output" class="p-3 mb-2  text-dark text-center font-weight-bold"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="card  ">
-
-      <div class="card-header">
-
-        <section id=appname>
-        </section>
-      </div>
-      <div class="card-body">
-
-           <div id="typeofwork" class="mb-3">
-          <label for="worktype">WorkType</label><br>
-          <select class="work-type form-control" id="worktype" name="work">
-            <option selected disabled value="">choose</option>
-            <option value="1">Labour</option>
-            <option value="2">Labour + Tools</option>
-            <option value="3">Labour + Tools + Material</option>
-          </select>
-        </div>
-
-        <div id="time" class="mb-3">
-          <label for="workHrs">Work Hours</label><br>
-          <input id="workHrs" class="form-control" type="number" min="1" step="1" max="100" placeholder="0">
-        </div>
-        <div id="amount" class="mb-3">
-          <label for="workamount">Amount</label><br>
-          <input id="workamount" class="form-control" type="number" min="1" step="1"  placeholder="0">
-        </div>
-
-        <div id="person" class="mb-3">
-          <label for="noofperson">No.of.Person</label><br>
-          <input id="noofperson" class="form-control" type="number" min="1" step="1" max="10" placeholder="0">
-        </div>
-
-     
-
-
-        <div class="d-grid gap-3">
-          <button class="btn btn-outline-primary" onclick="calculate()" type="button">Calculate</button>
-          <button class="btn btn-primary" onclick="reset()" type="button">Reset</button>
-        </div>
-
-        <div id="output" class="p-3 mb-2  text-dark text-center font-weight-bold"> </div>
-      </div>
-    </div>
-
-
-    <script rel="preload" type="text/javascript" async src="script/main.js"></script>
-</body>
-
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+            <script rel="preload" type="text/javascript" async src="script/main.js"></script>
+        </body>
+    </body>
 </html>

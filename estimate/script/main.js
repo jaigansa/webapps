@@ -32,7 +32,10 @@ function calculate() {
 
 }
 function reset() {
-    display.innerHTML = " ";
+    display.innerHTML = "";
+    workhrs.value = "";
+    workamt.value = "";
+    persons.value = "";
 }
 
 
