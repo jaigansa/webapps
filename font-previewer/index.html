@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Font Previewer</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind for Inter font and basic styling -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for better aesthetics */
+        .font-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .font-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        /* Ensure the input element is styled well */
+        #font-file-input {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8 font-sans">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">
+                Dynamic Font Previewer
+            </h1>
+            <p class="text-xl text-gray-600">
+                Select your local `.ttf` files to instantly preview them.
+            </p>
+        </header>
+
+        <!-- Control Panel: File Input & Settings -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-100">
+            <label for="font-file-input" class="block text-sm font-medium text-gray-700 mb-2">
+                1. Select all your TTF files (Supports 100+ files):
+            </label>
+            <input 
+                type="file" 
+                id="font-file-input" 
+                multiple 
+                accept=".ttf" 
+                class="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-lg file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-indigo-50 file:text-indigo-700
+                    hover:file:bg-indigo-100 transition duration-150"
+                onchange="handleFiles(this.files)"
+            >
+
+            <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                <!-- Text Input -->
+                <div>
+                    <label for="preview-text" class="block text-sm font-medium text-gray-700">
+                        2. Custom Preview Text
+                    </label>
+                    <input 
+                        type="text" 
+                        id="preview-text" 
+                        value="The quick brown fox jumps over the lazy dog." 
+                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                        oninput="updatePreviews()"
+                    >
+                </div>
+                <!-- Size Input -->
+                <div>
+                    <label for="font-size" class="block text-sm font-medium text-gray-700">
+                        3. Font Size (px)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="font-size" 
+                        value="24" 
+                        min="16"
+                        max="72"
+                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                        oninput="updatePreviews()"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Status and Preview Container -->
+        <div id="status-message" class="text-center text-lg text-gray-500 py-10">
+            Please select your `.ttf` files above to begin previewing.
+        </div>
+
+        <div id="font-preview-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Font cards will be injected here by JavaScript -->
+        </div>
+
+        <!-- Notification Message Box -->
+        <div id="notification-box" class="fixed bottom-4 right-4 bg-red-600 text-white p-3 rounded-lg shadow-xl hidden transition-opacity duration-300">
+            <!-- Error messages will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // Global references
+        const previewContainer = document.getElementById('font-preview-container');
+        const statusMessage = document.getElementById('status-message');
+        const previewTextEl = document.getElementById('preview-text');
+        const fontSizeEl = document.getElementById('font-size');
+        const notificationBox = document.getElementById('notification-box');
+
+        let loadedFontMap = new Map(); // Store map of fontName -> objectUrl for cleanup
+
+        /**
+         * Utility function to display non-blocking notification messages.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', or 'info'.
+         */
+        function showNotification(message, type = 'info') {
+            notificationBox.textContent = message;
+            notificationBox.className = 'fixed bottom-4 right-4 p-3 rounded-lg shadow-xl transition-opacity duration-300';
+            
+            switch (type) {
+                case 'success':
+                    notificationBox.classList.add('bg-green-600', 'text-white');
+                    break;
+                case 'error':
+                    notificationBox.classList.add('bg-red-600', 'text-white');
+                    break;
+                case 'info':
+                default:
+                    notificationBox.classList.add('bg-blue-600', 'text-white');
+                    break;
+            }
+
+            notificationBox.classList.remove('hidden');
+            setTimeout(() => {
+                notificationBox.classList.add('opacity-0');
+                setTimeout(() => {
+                    notificationBox.classList.add('hidden');
+                    notificationBox.classList.remove('opacity-0');
+                }, 300);
+            }, 5000); // Hide after 5 seconds
+        }
+
+
+        /**
+         * Cleans up previously loaded fonts and object URLs to release memory.
+         */
+        function cleanupPreviousFonts() {
+            // Remove previous cards from the UI
+            previewContainer.innerHTML = '';
+            
+            // Revoke temporary Blob URLs
+            for (const objectUrl of loadedFontMap.values()) {
+                URL.revokeObjectURL(objectUrl);
+            }
+            loadedFontMap.clear();
+
+            // Note: Cannot easily unload fonts from document.fonts once added, 
+            // but revoking the object URLs prevents resource leaks.
+        }
+
+        /**
+         * Handles the file input change event.
+         * @param {FileList} files - The list of files selected by the user.
+         */
+        async function handleFiles(files) {
+            cleanupPreviousFonts();
+            
+            if (files.length === 0) {
+                statusMessage.textContent = "Please select your .ttf files above to begin previewing.";
+                return;
+            }
+
+            statusMessage.textContent = `Loading ${files.length} font${files.length !== 1 ? 's' : ''}... Please wait.`;
+            statusMessage.classList.add('text-indigo-600', 'animate-pulse');
+
+            const fontPromises = [];
+            const ttfFiles = Array.from(files).filter(file => file.name.toLowerCase().endsWith('.ttf'));
+
+            if (ttfFiles.length !== files.length) {
+                showNotification(`Warning: Only .ttf files are supported. Ignoring ${files.length - ttfFiles.length} non-ttf file(s).`, 'info');
+            }
+            
+            if (ttfFiles.length === 0) {
+                 statusMessage.textContent = "No valid .ttf files selected.";
+                 statusMessage.classList.remove('text-indigo-600', 'animate-pulse');
+                 return;
+            }
+
+            // Iterate over only valid TTF files
+            ttfFiles.forEach((file, index) => {
+                // Generate a unique CSS font name based on the file name
+                const rawFontName = file.name.replace(/\.ttf$/i, '').replace(/[^a-zA-Z0-9]/g, '_');
+                const fontName = `local-font-${index}-${rawFontName}`; 
+                
+                fontPromises.push(new Promise((resolve) => {
+                    const reader = new FileReader();
+
+                    reader.onload = async (e) => {
+                        const blob = new Blob([e.target.result], { type: 'font/ttf' });
+                        const objectUrl = URL.createObjectURL(blob);
+                        
+                        try {
+                            // 1. Create FontFace object using the temporary URL
+                            const font = new FontFace(fontName, `url(${objectUrl})`);
+
+                            // 2. Load the font
+                            await font.load();
+
+                            // 3. Add the font to the document's font collection
+                            document.fonts.add(font);
+
+                            // 4. Create the preview card
+                            const card = createFontCard(fontName, file.name);
+                            previewContainer.appendChild(card);
+                            loadedFontMap.set(fontName, objectUrl);
+
+                        } catch (error) {
+                            console.error(`Error loading font ${file.name}:`, error);
+                            showNotification(`Failed to load font: ${file.name.substring(0, 30)}...`, 'error');
+                        } finally {
+                            // Resolve the promise regardless of success or failure
+                            resolve(); 
+                        }
+                    };
+
+                    reader.onerror = () => {
+                         console.error(`Error reading file: ${file.name}`);
+                         showNotification(`Error reading file: ${file.name.substring(0, 30)}...`, 'error');
+                         resolve();
+                    };
+
+                    // Read the file content as an ArrayBuffer
+                    reader.readAsArrayBuffer(file);
+                }));
+            });
+
+            // Wait for all fonts to be processed
+            await Promise.all(fontPromises);
+
+            statusMessage.classList.remove('text-indigo-600', 'animate-pulse');
+            if (previewContainer.children.length > 0) {
+                 statusMessage.textContent = `Successfully loaded and previewing ${previewContainer.children.length} font(s).`;
+                 statusMessage.classList.add('text-green-600');
+            } else {
+                 statusMessage.textContent = "Finished processing files. No fonts could be loaded.";
+                 statusMessage.classList.add('text-red-600');
+            }
+            
+            // Ensure the size and text are correctly applied on load
+            updatePreviews();
+        }
+
+        /**
+         * Creates a single font preview card element.
+         * @param {string} fontName - The unique CSS font-family name.
+         * @param {string} fileName - The original file name.
+         * @returns {HTMLElement} The created font card div.
+         */
+        function createFontCard(fontName, fileName) {
+            const card = document.createElement('div');
+            card.classList.add('font-card', 'bg-white', 'rounded-xl', 'p-5', 'flex', 'flex-col', 'space-y-3');
+            
+            // Set the font family for this specific card
+            // It MUST be wrapped in quotes if the font name contains spaces, which we avoid here, but it's good practice.
+            card.style.fontFamily = `"${fontName}", sans-serif`; 
+
+            // Font Name/Title
+            const title = document.createElement('h2');
+            title.classList.add('text-lg', 'font-semibold', 'text-gray-800', 'truncate');
+            title.textContent = fileName;
+
+            // Font Preview Text
+            const preview = document.createElement('p');
+            preview.classList.add('preview-text-content', 'break-words', 'leading-snug');
+            preview.id = `preview-for-${fontName}`; // Unique ID for later updates
+            preview.textContent = previewTextEl.value; // Initial text
+
+            // Font Size is set globally during updatePreviews call
+            preview.style.fontSize = `${fontSizeEl.value}px`; 
+
+            // Append elements
+            card.appendChild(title);
+            card.appendChild(preview);
+
+            return card;
+        }
+
+        /**
+         * Updates the preview text and font size across all loaded font cards.
+         */
+        function updatePreviews() {
+            const newText = previewTextEl.value || 'Preview Text';
+            let newSize = parseInt(fontSizeEl.value);
+
+            // Basic validation for size
+            if (isNaN(newSize) || newSize < 16) {
+                newSize = 16;
+            } else if (newSize > 72) {
+                newSize = 72;
+            }
+            
+            // Update all preview text elements
+            document.querySelectorAll('.preview-text-content').forEach(p => {
+                p.textContent = newText;
+                p.style.fontSize = `${newSize}px`;
+            });
+        }
+        
+        // Initial setup on load
+        window.onload = () => {
+             updatePreviews();
+        };
+
+        // Add event listener for application cleanup before window unload
+        window.addEventListener('beforeunload', cleanupPreviousFonts);
+
+    </script>
+</body>
+</html>
