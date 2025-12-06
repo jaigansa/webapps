@@ -56,8 +56,21 @@
         #add-button { background-color: #4CAF50; color: white; }
         #add-button:hover { background-color: #45a049; }
 
-        #print-button { background-color: #007BFF; color: white; margin-top: 20px; width: 100%; }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #print-button, #clear-button {
+            width: 100%;
+        }
+
+        #print-button { background-color: #007BFF; color: white; }
         #print-button:hover { background-color: #0056b3; }
+
+        #clear-button { background-color: #f44336; color: white; }
+        #clear-button:hover { background-color: #d32f2f; }
 
         /* --- Grocery List Display --- */
         #grocery-list {
@@ -209,9 +222,14 @@
     <ul id="grocery-list">
         </ul>
 
-    <button id="print-button" class="no-print" onclick="window.print()">
-        பட்டியலை அச்சிடுக (A5 வடிவம்)
-    </button>
+    <div class="action-buttons no-print">
+        <button id="print-button" onclick="window.print()">
+            பட்டியலை அச்சிடுக (A5 வடிவம்)
+        </button>
+        <button id="clear-button" onclick="clearAllItems()">
+            Clear All
+        </button>
+    </div>
 </div>
 
 <script>
@@ -333,6 +351,13 @@
     function removeItem(button) {
         const listItem = button.closest('li');
         list.removeChild(listItem);
+    }
+
+    // --- Function to clear all items from the list ---
+    function clearAllItems() {
+        if (confirm("Are you sure you want to clear the entire list?")) {
+            list.innerHTML = '';
+        }
     }
     
     // --- Function to load the initial list data from the external file ---
