@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A5 Tamil Grocery List</title>
+    
+    <style>
+        /* --- General Site Styling (Screen View) --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        #input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #item-name { flex-grow: 1; }
+        #item-quantity { width: 70px; }
+        #item-unit { width: 70px; }
+
+        #item-name, #item-quantity, #item-unit {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        #add-button { background-color: #4CAF50; color: white; }
+        #add-button:hover { background-color: #45a049; }
+
+        #print-button { background-color: #007BFF; color: white; margin-top: 20px; width: 100%; }
+        #print-button:hover { background-color: #0056b3; }
+
+        /* --- Grocery List Display --- */
+        #grocery-list {
+            list-style: none;
+            padding: 0;
+            border-top: 2px solid #eee;
+            margin-top: 15px;
+        }
+
+        #grocery-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
+            font-size: 1.1em;
+        }
+
+        .item-text { flex-grow: 1; }
+
+        .quantity-display {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            min-width: 100px;
+            justify-content: flex-end;
+        }
+        
+        .actions { 
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .delete-button {
+            background: none;
+            color: #f44336;
+            font-size: 1.2em;
+            padding: 0 5px 0 15px;
+        }
+        .delete-button:hover { color: #d32f2f; }
+        
+        /* --- Edit Mode Styles --- */
+        .edit-button {
+            background-color: #ff9800;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+        .edit-button:hover { background-color: #e68900; }
+
+        .save-button {
+            background-color: #2196F3;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+        .save-button:hover { background-color: #0b7dda; }
+
+        #grocery-list li input.edit-name,
+        #grocery-list li input.edit-quantity,
+        #grocery-list li select.edit-unit {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 1em;
+        }
+
+        #grocery-list li input.edit-name { flex-grow: 1; }
+        #grocery-list li input.edit-quantity { width: 60px; }
+        #grocery-list li select.edit-unit { width: 70px; }
+
+
+    /* Change flex direction on small screens */
+@media (max-width: 600px) {
+  .no-print {
+    flex-direction: column;   /* mobile */
+  }
+}
+
+        /* --- Print Media Query (A5 Formatting) --- */
+        @media print {
+            @page {
+                size: A5; /* 148mm x 210mm */
+                margin: 15mm;
+            }
+
+            .no-print, #input-area, h1 { display: none !important; }
+
+            body { background-color: white !important; margin: 0; padding: 0; color: #000; }
+            .container { max-width: 100%; box-shadow: none; padding: 0; margin: 0; }
+
+            #print-title {
+                display: block !important;
+                text-align: center;
+                color: #000;
+                margin-bottom: 20px;
+                font-size: 1.5em;
+                font-weight: bold;
+            }
+
+            #grocery-list {
+                font-size: 11pt;
+                border: 1px solid #000;
+                border-top: 3px solid #000;
+            }
+
+            #grocery-list li {
+                padding: 8px 5px;
+                border-bottom: 1px dashed #ccc;
+            }
+            
+            .quantity-display {
+                font-weight: bold;
+                min-width: 80px;
+                justify-content: flex-end;
+            }
+        }
+        
+        #print-title { display: none; }
+    </style>
+    
+    <script src="list_data.js"></script> 
+</head>
+<body onload="loadPredefinedItems()">
+
+<div class="container">
+    <h1 class="no-print">🛒 மளிகைப் பட்டியல்</h1>
+    <div id="print-title">மளிகைப் பட்டியல் (A5)</div>
+
+    <div id="input-area" class="no-print">
+        <input type="text" id="item-name" placeholder="பொருள் பெயர்" required>
+        <input type="number" id="item-quantity" placeholder="அளவு" value="1" min="1">
+        <select id="item-unit">
+            <option value="nos">nos</option>
+            <option value="kg">kg</option>
+            <option value="L">L</option>
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+            <option value="pack">pack</option>
+            <option value="jar">jar</option>
+            <option value="roll">roll</option>
+            <option value="bottle">bottle</option>
+        </select>
+        <button id="add-button" onclick="addItemFromInput()">சேர்க்க</button>
+    </div>
+
+    <ul id="grocery-list">
+        </ul>
+
+    <button id="print-button" class="no-print" onclick="window.print()">
+        பட்டியலை அச்சிடுக (A5 வடிவம்)
+    </button>
+</div>
+
+<script>
+    const nameInput = document.getElementById('item-name');
+    const quantityInput = document.getElementById('item-quantity');
+    const unitInput = document.getElementById('item-unit'); 
+    const list = document.getElementById('grocery-list');
+
+    // --- Core function to add an item to the list ---
+    function createListItem(name, quantity, unit) {
+        const listItem = document.createElement('li');
+        // Store data in attributes for editing
+        listItem.setAttribute('data-name', name);
+        listItem.setAttribute('data-quantity', quantity);
+        listItem.setAttribute('data-unit', unit);
+        
+        // Initial Display HTML
+        listItem.innerHTML = `
+            <span class="item-text">${name}</span>
+            <span class="quantity-display">${quantity} ${unit}</span>
+            <div class="actions no-print">
+                <button class="edit-button" onclick="editItem(this)">Edit</button>
+                <button class="delete-button" onclick="removeItem(this)">✖</button>
+            </div>
+        `;
+
+        list.appendChild(listItem);
+    }
+    
+    // --- Function to handle user input from the fields ---
+    function addItemFromInput() {
+        const name = nameInput.value.trim();
+        const quantity = quantityInput.value.trim();
+        const unit = unitInput.value;
+
+        if (name === "") {
+            alert("Please enter an item name.");
+            return;
+        }
+        if (quantity === "" || parseFloat(quantity) <= 0) {
+            alert("Please enter a valid quantity.");
+            return;
+        }
+        
+        createListItem(name, quantity, unit);
+
+        // Clear inputs and set focus for next item
+        nameInput.value = '';
+        quantityInput.value = '1';
+        unitInput.value = 'nos'; 
+        nameInput.focus();
+    }
+
+    // --- Function to start editing an item ---
+    function editItem(button) {
+        const listItem = button.closest('li');
+        const currentName = listItem.getAttribute('data-name');
+        const currentQuantity = listItem.getAttribute('data-quantity');
+        const currentUnit = listItem.getAttribute('data-unit');
+
+        // Replace display spans with input fields for editing
+        listItem.innerHTML = `
+            <input type="text" class="edit-name" value="${currentName}">
+            <input type="number" class="edit-quantity" value="${currentQuantity}" min="0">
+            <select class="edit-unit">
+                <option value="nos" ${currentUnit === 'nos' ? 'selected' : ''}>nos</option>
+                <option value="kg" ${currentUnit === 'kg' ? 'selected' : ''}>kg</option>
+                <option value="L" ${currentUnit === 'L' ? 'selected' : ''}>L</option>
+                <option value="g" ${currentUnit === 'g' ? 'selected' : ''}>g</option>
+                <option value="ml" ${currentUnit === 'ml' ? 'selected' : ''}>ml</option>
+                <option value="pack" ${currentUnit === 'pack' ? 'selected' : ''}>pack</option>
+                <option value="jar" ${currentUnit === 'jar' ? 'selected' : ''}>jar</option>
+                <option value="roll" ${currentUnit === 'roll' ? 'selected' : ''}>roll</option>
+                <option value="bottle" ${currentUnit === 'bottle' ? 'selected' : ''}>bottle</option>
+            </select>
+            <div class="actions no-print">
+                <button class="save-button" onclick="saveItem(this)">Save</button>
+            </div>
+        `;
+        
+        listItem.style.backgroundColor = '#fffacd'; 
+    }
+
+    // --- Function to save the edited item ---
+    function saveItem(button) {
+        const listItem = button.closest('li');
+        const newName = listItem.querySelector('.edit-name').value.trim();
+        const newQuantity = listItem.querySelector('.edit-quantity').value.trim();
+        const newUnit = listItem.querySelector('.edit-unit').value;
+
+        if (newName === "") {
+            alert("Item name cannot be empty.");
+            return;
+        }
+        if (newQuantity === "" || parseFloat(newQuantity) <= 0) {
+            alert("Quantity must be greater than zero.");
+            return;
+        }
+        
+        // Update data attributes
+        listItem.setAttribute('data-name', newName);
+        listItem.setAttribute('data-quantity', newQuantity);
+        listItem.setAttribute('data-unit', newUnit);
+        
+        // Revert back to display mode
+        listItem.innerHTML = `
+            <span class="item-text">${newName}</span>
+            <span class="quantity-display">${newQuantity} ${newUnit}</span>
+            <div class="actions no-print">
+                <button class="edit-button" onclick="editItem(this)">Edit</button>
+                <button class="delete-button" onclick="removeItem(this)">✖</button>
+            </div>
+        `;
+        
+        listItem.style.backgroundColor = '';
+    }
+    
+    // --- Function to remove an item (called by the delete button) ---
+    function removeItem(button) {
+        const listItem = button.closest('li');
+        list.removeChild(listItem);
+    }
+    
+    // --- Function to load the initial list data from the external file ---
+    function loadPredefinedItems() {
+        if (typeof predefinedItems !== 'undefined') {
+            predefinedItems.forEach(item => {
+                const unit = item.unit || 'nos'; 
+                createListItem(item.name, item.quantity, unit);
+            });
+        }
+    }
+    
+    // --- Event Listeners for 'Enter' key ---
+    nameInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addItemFromInput();
+        }
+    });
+
+    quantityInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addItemFromInput();
+        }
+    });
+</script>
+
+</body>
+</html>
