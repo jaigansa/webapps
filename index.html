@@ -1,254 +1,192 @@
-<!doctype html>
-<html lang="en" data-bs-theme="dark">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">
+<!DOCTYPE html>
+<html lang="en">
 
-        <title>WEB APPS</title>
+<head>
+    <meta charset="UTF-8">
+    <title>Web Apps</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-        <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-        <!-- Favicons -->
-        <link rel="apple-touch-icon" href="" sizes="180x180">
-        <link rel="icon" href="" sizes="32x32" type="image/png">
-        <link rel="icon" href="" sizes="16x16" type="image/png">
-        <link rel="manifest" href="/">
-        <link rel="mask-icon" href="" color="#712cf9">
-        <link rel="icon" href="">
-        <meta name="theme-color" content="#712cf9">
+    <style>
+        :root {
+            --bg-base: #24273a;
+            --bg-surface: #1e2030;
+            --border-color: #363a4f;
+            --text-main: #cad3f5;
+            --text-muted: #b8c0e0;
+            --accent: #8aadf4;
+            --accent-alt: #a6da95;
+            --accent-soft: #b7bdf8;
+            --radius: 18px;
+        }
 
+        body {
+            margin: 0;
+            background: var(--bg-base);
+            color: var(--text-main);
+            font-family: system-ui, sans-serif;
+        }
 
-        <style>
-            .bd-placeholder-img {
-                font-size: 1.125rem;
-                text-anchor: middle;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                user-select: none;
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 35px;
+            color: var(--accent-soft);
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* GRID */
+        .webapp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+        }
+
+        /* CARD */
+        .webapp-card {
+            background: var(--bg-surface);
+            padding: 22px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            transition: 0.35s ease;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .webapp-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        .webapp-card__icon {
+            font-size: 32px;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .webapp-card__title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 8px;
+            color: var(--accent-soft);
+        }
+
+        .webapp-card__desc {
+            font-size: 14px;
+            margin: 0 0 18px;
+            color: var(--text-muted);
+        }
+
+        .webapp-card__btn {
+            background: var(--accent);
+            padding: 9px 14px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: #1e2030;
+            font-weight: 600;
+            transition: 0.25s ease;
+            display: inline-block;
+        }
+
+        .webapp-card__btn:hover {
+            background: var(--accent-alt);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
             }
 
-            @media(min-width: 768px) {
-                .bd-placeholder-img-lg {
-                    font-size: 3.5rem;
-                }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
             }
 
-            .b-example-divider {
-                width: 100%;
-                height: 3rem;
-                background-color: rgba(0, 0, 0, 0.1);
-                border: solid rgba(0, 0, 0, 0.15);
-                border-width: 1px 0;
-                box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1), inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
+            to {
+                opacity: 1;
             }
+        }
+    </style>
+</head>
 
-            .b-example-vr {
-                flex-shrink: 0;
-                width: 1.5rem;
-                height: 100vh;
+<body>
+
+    <div class="container">
+        <h1 class="section-title">Web Apps</h1>
+        <div id="webappGrid" class="webapp-grid"></div>
+    </div>
+
+    <script>
+        const webapps = [
+            {
+                icon: "bi-calculator",
+                title: "Tamil Calculator",
+                desc: "Tamil number calculations",
+                link: "tamilcalc",
+                btn: "Open"
+            },
+            {
+                icon: "bi-cart-check-fill",
+                title: "Grocery List",
+                desc: "Print-friendly grocery list",
+                link: "grocery-list",
+                btn: "Open"
+            },
+            {
+                icon: "bi-gear-fill",
+                title: "Font Converter",
+                desc: "Tamil font converter",
+                link: "tamcon",
+                btn: "Convert"
+            },
+            {
+                icon: "bi-receipt",
+                title: "Estimate",
+                desc: "Work estimate calculator",
+                link: "estimate",
+                btn: "Calculate"
+            },
+            {
+                icon: "bi-whatsapp",
+                title: "Easy Chat",
+                desc: "WhatsApp without saving number",
+                link: "quick_wa",
+                btn: "Start"
             }
+        ];
 
-            .bi {
-                vertical-align: -0.125em;
-                fill: currentColor;
-            }
+        const grid = document.getElementById("webappGrid");
 
-            .nav-scroller {
-                position: relative;
-                z-index: 2;
-                height: 2.75rem;
-                overflow-y: hidden;
-            }
+        webapps.forEach((app, index) => {
+            grid.innerHTML += `
+                <div class="webapp-card" style="animation-delay:${index * 0.08}s">
+                    <i class="webapp-card__icon ${app.icon}"></i>
+                    <h3 class="webapp-card__title">${app.title}</h3>
+                    <p class="webapp-card__desc">${app.desc}</p>
+                    <a href="${app.link}" class="webapp-card__btn">${app.btn}</a>
+                </div>`;
+        });
+    </script>
 
-            .nav-scroller .nav {
-                display: flex;
-                flex-wrap: nowrap;
-                padding-bottom: 1rem;
-                margin-top: -1px;
-                overflow-x: auto;
-                text-align: center;
-                white-space: nowrap;
-                -webkit-overflow-scrolling: touch;
-            }
+</body>
 
-            .btn-bd-primary {
-                --bd-violet-bg: #712cf9;
-                --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-
-                --bs-btn-font-weight: 600;
-                --bs-btn-color: var(--bs-white);
-                --bs-btn-bg: var(--bd-violet-bg);
-                --bs-btn-border-color: var(--bd-violet-bg);
-                --bs-btn-hover-color: var(--bs-white);
-                --bs-btn-hover-bg: #6528e0;
-                --bs-btn-hover-border-color: #6528e0;
-                --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-                --bs-btn-active-color: var(--bs-btn-hover-color);
-                --bs-btn-active-bg: #5a23c8;
-                --bs-btn-active-border-color: #5a23c8;
-            }
-            .bd-mode-toggle {
-                z-index: 1500;
-            }
-
-            .feature-icon {
-                width: 4rem;
-                height: 4rem;
-                border-radius: 0.75rem;
-            }
-
-            .icon-square {
-                width: 3rem;
-                height: 3rem;
-                border-radius: 0.75rem;
-            }
-
-            .text-shadow-1 {
-                text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.25);
-            }
-            .text-shadow-2 {
-                text-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
-            }
-            .text-shadow-3 {
-                text-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.25);
-            }
-
-            .card-cover {
-                background-repeat: no-repeat;
-                background-position: center center;
-                background-size: cover;
-            }
-
-            .feature-icon-small {
-                width: 3rem;
-                height: 3rem;
-            }
-        </style>
-    </head>
-    <body>
-        <!-- main -->
-        <div class="container px-4 py-5" id="hanging-icons">
-            <h2 class="pb-2 border-bottom">Apps List</h2>
-            <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-                <div class="col d-flex align-items-start">
-                    <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                        <i class="bi bi-calculator-fill"></i>
-                    </div>
-                    <div>
-                        <h3 class="fs-2 text-body-emphasis">Tamil Calculator</h3>
-                        <p>
-                            Tamil Calculation is possible this calculator</p>
-                        <a href="tamilcalc" class="btn btn-primary">
-                            Calculate
-                        </a>
-                    </div>
-                </div>
-                <div class="col d-flex align-items-start">
-                    <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                        <i class="bi bi-cart-check-fill"></i>
-                    </div>
-                    <div>
-                        <h3 class="fs-2 text-body-emphasis">Grocery List</h3>
-                        <p>Grocery List Print</p>
-                        <a href="grocery-list" class="btn btn-primary">
-                            Convert
-                        </a>
-                <div class="col d-flex align-items-start">
-                    <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                        <i class="bi bi-gear-fill"></i>
-                    </div>
-                    <div>
-                        <h3 class="fs-2 text-body-emphasis">Tamil Font Converter</h3>
-                        <p>Tamil fonts Converters</p>
-                        <a href="tamcon" class="btn btn-primary">
-                            Convert
-                        </a>
-                    </div>
-                </div>
-                <div class="col d-flex align-items-start">
-                    <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                        <i class="bi bi-receipt"></i>
-                    </div>
-                    <div>
-                        <h3 class="fs-2 text-body-emphasis">Estimate Calculate</h3>
-                        <p>
-                            Working amount estimate Calculation</p>
-                        <a href="estimate" class="btn btn-primary">
-                            Calculate
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col d-flex align-items-start">
-                    <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-                        <i class="bi bi-whatsapp"></i>
-                    </div>
-                    <div>
-                        <h3 class="fs-2 text-body-emphasis">Easy Chat</h3>
-                        <p>
-                            Whatsapp chat without store number</p>
-                        <a href="quick_wa" class="btn btn-primary">
-                            Chat
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="b-example-divider"></div>
-
-        <!-- Footer -->
-        <footer
-            class="text-center text-lg-start  text-muted">
-            <!-- Section: Social media -->
-            <section
-                class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
-                <!-- Left -->
-                <div class="me-5 d-none d-lg-block">
-                    <span>Get connected with us on social networks:</span>
-                </div>
-                <!-- Left -->
-
-                <!-- Right -->
-                <div>
-                    <a href="https://fb.com/jaigansa" class="me-4 link-secondary text-decoration-none">
-                        <i class="bi bi-facebook"></i>
-
-                    </a>
-                    <a href="https://www.twitter.com/jaigansa" class="me-4 link-secondary text-decoration-none">
-                        <i class="bi bi-twitter"></i>
-                    </a>
-                    <a href="https://www.google.com" class="me-4 link-secondary text-decoration-none">
-                        <i class="bi bi-google"></i>
-                    </a>
-                    <a href="https://www.instagram.com/jaigansa" class="me-4 link-secondary text-decoration-none">
-                        <i class="bi bi-instagram"></i>
-                    </a>
-                    <a href="https://linkedin.com/jaigansa" class="me-4 link-secondary text-decoration-none">
-                        <i class="bi bi-linkedin"></i>
-                    </a>
-                    <a href="https://github.com/jaigansa" class="me-4 link-secondary text-decoration-none">
-                        <i class="bi bi-github"></i>
-                    </a>
-                </div>
-                <!-- Right -->
-            </section>
-            <!-- Section: Social media -->
-
-
-            <!-- Copyright -->
-            <div class="text-center p-4">
-                Created by:
-                <a class="text-reset fw-bold" href="https://jaigansa.github.io">JAIGANESH</a>
-            </div>
-            <!-- Copyright -->
-        </footer>
-        <!-- Footer -->
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    </body>
 </html>
+
