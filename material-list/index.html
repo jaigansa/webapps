@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck Body Material List</title>
+    
+    <style>
+        /* --- Base Styling (Desktop/Tablet) --- */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
+        .container { max-width: 950px; margin: 0 auto; background-color: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 25px; }
+
+        /* Input Area (Flex layout for desktop) */
+        #input-area { 
+            display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; align-items: flex-end; 
+            background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef; 
+        }
+        
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 0.85em; font-weight: 600; color: #555; }
+        
+        select, input { padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95em; height: 38px; box-sizing: border-box; }
+        
+        #item-material { width: 70px; }
+        #item-shape { width: 130px; }
+        #item-size { flex-grow: 1; min-width: 180px; }
+        #item-length { width: 100px; }
+        #item-quantity { width: 80px; }
+
+        /* Weight Box */
+        #weight-display {
+            padding: 8px 15px; background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 4px;
+            font-weight: bold; color: #856404; min-width: 120px; text-align: right;
+            height: 38px; line-height: 20px; box-sizing: border-box;
+            align-self: flex-end; 
+        }
+
+        /* Buttons */
+        button { cursor: pointer; font-weight: bold; transition: 0.2s; border: none; border-radius: 4px; }
+        #add-button { background-color: #28a745; color: white; height: 38px; padding: 0 20px; }
+        #print-button { background-color: #007BFF; color: white; margin-top: 20px; width: 100%; padding: 12px; font-size: 1.1em; }
+        
+        /* List Header */
+        .list-header {
+            display: grid; 
+            grid-template-columns: 3fr 1fr 1fr 0.5fr; 
+            font-weight: bold; 
+            padding: 10px; 
+            background: #2c3e50; 
+            color: white;
+            border-radius: 4px 4px 0 0;
+            margin-top: 10px;
+        }
+        .list-header span:nth-child(2) { text-align: right; margin-right: 15px;}
+        .list-header span:nth-child(3) { text-align: center; }
+
+        /* Material List */
+        #material-list { list-style: none; padding: 0; margin: 0; border: 1px solid #ddd; border-top: none; }
+        #material-list li {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 0.5fr; 
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+        }
+        #material-list li:nth-child(even) { background-color: #f9f9f9; }
+
+        .item-name { font-weight: bold; font-size: 1.05em; color: #2c3e50; }
+        .item-spec { display: block; font-size: 0.9em; color: #666; margin-top: 2px; }
+        .weight-col { text-align: right; font-weight: bold; color: #555; margin-right: 15px;}
+        .qty-col { text-align: center; font-weight: bold; background: #e2e6ea; padding: 4px 8px; border-radius: 4px; display: inline-block; justify-self: center; }
+        
+        .delete-button { background: none; color: #dc3545; font-size: 1.2em; padding: 0 10px; text-align: center;}
+
+        /* --- MOBILE RESPONSIVE CSS --- */
+        @media screen and (max-width: 768px) {
+            .container { padding: 10px; }
+            h1 { font-size: 1.5em; }
+
+            /* Inputs Stack Vertically */
+            #input-area { flex-direction: column; gap: 10px; padding: 10px; }
+            .input-group, #item-material, #item-shape, #item-size, #item-length, #item-quantity, #weight-display, #add-button {
+                width: 100% !important; 
+                min-width: unset !important;
+                margin: 0; 
+                box-sizing: border-box;
+            }
+            
+            /* Weight display is now a full-width block */
+            #weight-display { text-align: center; margin-bottom: 5px; }
+
+            /* List Item Collapse */
+            .list-header { display: none; } /* Hide Header on Mobile */
+            
+            #material-list li {
+                grid-template-columns: 1fr 1fr; /* Two columns: Item Details | Qty/Weight/Action */
+                grid-template-rows: auto auto;
+                gap: 5px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+                border-radius: 4px;
+                padding: 10px;
+            }
+
+            .item-name { grid-column: 1 / 3; font-size: 1.1em; }
+            .item-spec { grid-column: 1 / 3; font-size: 0.85em; }
+            
+            /* Reposition weight, quantity, and delete button */
+            .weight-col { 
+                grid-column: 1 / 2; 
+                text-align: left; 
+                margin-right: 0; 
+                font-size: 0.95em; 
+                font-weight: normal; 
+                color: #856404; /* Match input color for visual distinction */
+            }
+            
+            .qty-col { 
+                grid-column: 2 / 3; 
+                text-align: right; 
+                justify-self: flex-end;
+                background: none; 
+                padding: 0; 
+            }
+            
+            .delete-button { 
+                grid-column: 2 / 3; 
+                grid-row: 2 / 3; 
+                justify-self: flex-end; 
+                align-self: center;
+                padding: 5px 0;
+            }
+        }
+        
+        /* --- PRINT DESIGN --- */
+        @media print {
+            @page { size: A5; margin: 10mm; }
+            .no-print, #input-area, #add-button, #print-button, .delete-button { display: none !important; }
+            body { background: white; margin: 0; padding: 0; font-size: 11pt; color: #000; }
+            .container { box-shadow: none; padding: 0; margin: 0; border: none; max-width: 100%; }
+
+            #print-title { display: block !important; text-align: center; margin-bottom: 20px; font-size: 16pt; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 10px; }
+
+            .list-header { background: #eee !important; color: #000 !important; border: 1px solid #000; grid-template-columns: 3fr 1fr 1fr; }
+            
+            #material-list { border: 1px solid #000; border-top: none; }
+            #material-list li { grid-template-columns: 3fr 1fr 1fr; border-bottom: 1px solid #000; padding: 8px; page-break-inside: avoid; }
+            
+            .qty-col { background: none; border: none; }
+            .weight-col { color: #000; font-weight: bold; }
+        }
+        #print-title { display: none; }
+    </style>
+    
+</head>
+<body> <div class="container">
+    <h1 class="no-print">🏗️ Material List</h1>
+    <div id="print-title">Material Purchase Order</div>
+
+    <div id="input-area" class="no-print">
+        <div class="input-group">
+            <label>Material</label>
+            <select id="item-material" onchange="calculateTotalWeight()">
+                <option value="MS" selected>MS</option>
+                <option value="SS" >SS</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Shape</label>
+            <select id="item-shape" onchange="updateSizeDropdown()">
+                <option value="angle">Angle</option>
+                <option value="flat">Flat</option>
+                <option value="tube">Tube/Box</option>
+                <option value="pipe">Pipe</option>
+                <option value="channel">Channel</option>
+                <option value="beam">Beam</option>
+                <option value="sheet">Sheet</option>
+                <option value="custom">Custom</option>
+            </select>
+        </div>
+
+        <div class="input-group" style="flex-grow: 1;">
+            <label>Size / Specification</label>
+            <select id="item-size" onchange="calculateTotalWeight()"></select>
+        </div>
+
+        <div class="input-group" id="length-group">
+            <label>Length (m)</label>
+            <input type="number" id="item-length" value="6" min="0" step="0.1" oninput="calculateTotalWeight()">
+        </div>
+
+        <div class="input-group">
+            <label>Qty (Nos)</label>
+            <input type="number" id="item-quantity" value="1" min="1" oninput="calculateTotalWeight()">
+        </div>
+
+        <div id="weight-display">Approx. 0.00 kg</div> 
+
+        <button id="add-button" onclick="addItemFromInput()">Add</button>
+    </div>
+
+    <div class="list-header">
+        <span>Description</span>
+        <span style="text-align: right; margin-right: 15px;">Weight (kg)</span>
+        <span style="text-align: center;">Qty (Nos)</span>
+        <span class="no-print">Action</span>
+    </div>
+
+    <ul id="material-list"></ul>
+
+    <button id="print-button" class="no-print" onclick="window.print()">
+        🖨️ Print List (A5 PDF)
+    </button>
+</div>
+
+<script>
+    // These items are available in the Size/Specification dropdown when "Custom" is selected.
+    const CUSTOM_DATA = [
+        { name: "Welding Rods", spec: "E6013, 3.15mm (10 Gauge)", quantity: 5, unit: "kg box", type: "custom", estimated_total_weight: 25.00 },
+        { name: "Grinding Wheels", spec: "4-inch, Metal Cutting", quantity: 20, unit: "nos", type: "custom", estimated_total_weight: 'N/A' },
+        { name: "Paint Brush Set", spec: "Assorted sizes, Synthetic", quantity: 1, unit: "set", type: "custom", estimated_total_weight: 'N/A' },
+        { name: "Red Oxide Primer", spec: "Industrial Grade, Quick Dry", quantity: 10, unit: "liter", type: "custom", estimated_total_weight: 12.50 }
+    ];
+
+    // --- 1. CONFIGURATION (Structural Data) ---
+    const DENSITIES = { 'MS': 7850, 'SS': 8000 };
+    
+    const SHEET_SIZES = [
+        { label: '8ft x 4ft (1220x2440mm)', W: 1220, L: 2440 },
+        { label: '8ft x 5ft (1525x2440mm)', W: 1525, L: 2440 },
+        { label: '10ft x 5ft (1525x3050mm)', W: 1525, L: 3050 }
+    ];
+
+    const MATERIAL_DATA = {
+        angle: [
+            { label: '25x25x3', H: 25, W: 25, T: 3, type: 'Angle' }, 
+            { label: '40x40x5', H: 40, W: 40, T: 5, type: 'Angle' }, 
+            { label: '50x50x6', H: 50, W: 50, T: 6, type: 'Angle' }, 
+            { label: '75x75x8', H: 75, W: 75, T: 8, type: 'Angle' },
+            { label: '100x100x10', H: 100, W: 100, T: 10, type: 'Angle' }
+        ],
+        flat: [
+            { label: '25x5', H: 25, W: 1000, T: 5, type: 'Flat' }, 
+            { label: '40x6', H: 40, W: 1000, T: 6, type: 'Flat' }, 
+            { label: '50x8', H: 50, W: 1000, T: 8, type: 'Flat' },
+            { label: '100x10', H: 100, W: 1000, T: 10, type: 'Flat' }
+        ],
+        tube: [
+            { label: '25x25x1.2', H: 25, W: 25, T: 1.2, type: 'Tube' }, 
+            { label: '40x40x2', H: 40, W: 40, T: 2, type: 'Tube' }, 
+            { label: '50x50x2.5', H: 50, W: 50, T: 2.5, type: 'Tube' },
+            { label: '100x50x3', H: 100, W: 50, T: 3, type: 'Tube' }
+        ],
+        pipe: [
+            { label: '1.5 inch (48.3x3)', OD: 48.3, T: 3, type: 'Pipe' }, 
+            { label: '2.0 inch (60.3x3.6)', OD: 60.3, T: 3.6, type: 'Pipe' },
+            { label: '3.0 inch (88.9x4)', OD: 88.9, T: 4, type: 'Pipe' }
+        ],
+        channel: [{ label: '100x50x5', H: 100, W: 50, T: 5, type: 'Channel' }],
+        beam: [{ label: '150x75x6', H: 150, W: 75, T: 6, type: 'Beam' }],
+        sheet: [
+            { label: '1.0 mm (20 Gauge)', T: 1.0, type: 'Sheet' }, 
+            { label: '1.6 mm (16 Gauge)', T: 1.6, type: 'Sheet' }, 
+            { label: '2.0 mm (14 Gauge)', T: 2.0, type: 'Sheet' }, 
+            { label: '3.0 mm (10 Gauge)', T: 3.0, type: 'Sheet' }
+        ]
+    };
+
+    // --- 2. ELEMENTS ---
+    const sizeInput = document.getElementById('item-size');
+    const lenInput = document.getElementById('item-length');
+    const lenGroup = document.getElementById('length-group');
+    const list = document.getElementById('material-list');
+    const matInput = document.getElementById('item-material');
+    const qtyInput = document.getElementById('item-quantity');
+    const wtDisplay = document.getElementById('weight-display');
+
+    let selectedData = {};
+
+    // --- 3. DROPDOWN LOGIC ---
+    function updateSizeDropdown() {
+        const shape = document.getElementById('item-shape').value;
+        const specs = MATERIAL_DATA[shape] || [];
+        sizeInput.innerHTML = ''; 
+
+        if (shape === 'sheet') {
+            specs.forEach(spec => {
+                SHEET_SIZES.forEach(sz => {
+                    const opt = document.createElement('option');
+                    opt.value = JSON.stringify({ ...spec, sheetW: sz.W, sheetL: sz.L, sizeLabel: sz.label });
+                    opt.text = `${spec.label} - ${sz.label}`;
+                    sizeInput.appendChild(opt);
+                });
+            });
+            lenGroup.style.display = 'none'; 
+            sizeInput.style.display = 'block';
+
+        } else if (shape === 'custom') {
+            // 1. Option to enter a brand new custom item
+            const newOpt = document.createElement('option');
+            newOpt.value = JSON.stringify({ name: 'CUSTOM_PROMPT', spec: 'N/A', estimated_total_weight: 'N/A' });
+            newOpt.text = '--- Enter New Custom Item ---';
+            sizeInput.appendChild(newOpt);
+
+            // 2. Load predefined custom items from the CUSTOM_DATA list
+            CUSTOM_DATA.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify(item); 
+                opt.text = item.name; 
+                sizeInput.appendChild(opt);
+            });
+            
+            lenGroup.style.display = 'none';
+            sizeInput.style.display = 'block';
+
+        } else {
+            // Logic for standard structural shapes
+            specs.forEach(spec => {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify(spec);
+                opt.text = spec.label;
+                sizeInput.appendChild(opt);
+            });
+            lenGroup.style.display = 'flex';
+            sizeInput.style.display = 'block';
+        }
+        calculateTotalWeight();
+    }
+    
+    function selectItemData() {
+        if(sizeInput.value) {
+            selectedData = JSON.parse(sizeInput.value);
+        }
+    }
+
+    // --- 4. WEIGHT CALCULATION LOGIC ---
+    function calculateTotalWeight() {
+        const shape = document.getElementById('item-shape').value;
+        const qty = parseFloat(qtyInput.value) || 0;
+        const density = DENSITIES[matInput.value];
+
+        if (shape === 'custom') {
+            wtDisplay.textContent = 'Approx. N/A';
+            
+            if (sizeInput.value) {
+                const data = JSON.parse(sizeInput.value);
+                const weight = parseFloat(data.estimated_total_weight);
+                if (!isNaN(weight)) {
+                    wtDisplay.textContent = `Approx. ${(weight * qty).toFixed(2)} kg`;
+                }
+            }
+            return 'N/A';
+        }
+
+        if(!sizeInput.value) return;
+        const data = JSON.parse(sizeInput.value);
+        selectedData = data;
+
+        let vol_m3 = 0;
+        
+        if (data.type === 'Sheet') {
+            vol_m3 = (data.T/1000) * (data.sheetW/1000) * (data.sheetL/1000);
+        } else {
+            const len_m = parseFloat(lenInput.value) || 0;
+            const T = (data.T||0)/1000, H = (data.H||0)/1000, W = (data.W||0)/1000, OD = (data.OD||0)/1000;
+            let area = 0;
+            
+            if(data.type==='Angle' || data.type==='Channel') area = (H*T) + ((W-T)*T); 
+            else if(data.type==='Flat') area = H * T;
+            else if(data.type==='Tube' || data.type==='Beam') area = (H*W) - ((H-2*T)*(W-2*T)); 
+            else if(data.type==='Pipe') area = Math.PI * (Math.pow(OD/2, 2) - Math.pow((OD-2*T)/2, 2));
+            
+            vol_m3 = area * len_m;
+        }
+
+        const totalWt = vol_m3 * density * qty;
+        wtDisplay.textContent = `Approx. ${totalWt.toFixed(2)} kg`;
+        return totalWt.toFixed(2);
+    }
+    
+    // --- 5. ADD ITEM LOGIC ---
+    function addItemFromInput() {
+        const shape = document.getElementById('item-shape').value;
+        const mat = matInput.value;
+        const qty = qtyInput.value;
+        const wt = calculateTotalWeight();
+        
+        let name, spec, weightForList = wt;
+
+        if (shape === 'custom') {
+            const data = JSON.parse(sizeInput.value);
+            
+            if (data.name === 'CUSTOM_PROMPT') {
+                name = prompt("Enter Name (e.g., Welding Rods):");
+                if(!name) return;
+                spec = prompt("Enter Size/Details:");
+                weightForList = prompt("Enter Manual Total Weight (kg):") || 'N/A';
+            } else {
+                name = data.name;
+                spec = data.spec;
+                const itemWt = parseFloat(data.estimated_total_weight);
+                const itemQty = parseFloat(qty);
+                if (!isNaN(itemWt) && !isNaN(itemQty)) {
+                    weightForList = (itemWt * itemQty).toFixed(2);
+                } else {
+                    weightForList = data.estimated_total_weight || 'N/A';
+                }
+            }
+            addToList(name, spec, qty, weightForList);
+
+        } else {
+            selectItemData();
+            if (!selectedData || !selectedData.label) return;
+
+            if (shape === 'sheet') {
+                name = `${mat} Sheet ${selectedData.label}`;
+                spec = `Size: ${selectedData.sizeLabel}`;
+            } else {
+                name = `${mat} ${selectedData.type} ${selectedData.label}`;
+                spec = `Length: ${lenInput.value}m / pc`;
+            }
+            addToList(name, spec, qty, weightForList);
+        }
+    }
+
+    function addToList(name, spec, qty, weight) {
+        const li = document.createElement('li');
+        
+        let displayWt = '-';
+        if (weight && weight !== 'N/A') {
+            const numWeight = parseFloat(weight);
+            if (!isNaN(numWeight)) {
+                displayWt = `Approx. ${numWeight.toFixed(2)} kg`;
+            } else {
+                displayWt = `Approx. ${weight} kg`;
+            }
+        }
+
+        li.innerHTML = `
+            <div>
+                <span class="item-name">${name}</span>
+                <span class="item-spec">${spec}</span>
+            </div>
+            <div class="weight-col">${displayWt}</div>
+            <div class="qty-col">${qty}</div>
+            <button class="delete-button" onclick="this.parentElement.remove()">✖</button>
+        `;
+        list.appendChild(li);
+    }
+
+    
+    // Init and listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        updateSizeDropdown();
+        matInput.addEventListener('change', calculateTotalWeight);
+        sizeInput.addEventListener('change', calculateTotalWeight);
+        selectItemData();
+    });
+</script>
+
+</body>
+</html>
