@@ -192,7 +192,12 @@ button {
 #material-list li:nth-child(even) { 
     background-color: #f7f9fb; /* Very subtle alternating row color */
 }
-
+/* Fix for doubled border on screen view */
+#material-list li:last-child {
+    border-bottom: none;
+    border-radius: 0 0 8px 8px;
+    background-color: none;
+}
 .item-name { 
     font-weight: 600; 
     font-size: 1em; 
@@ -413,7 +418,10 @@ button {
         padding: 6px 8px; 
         page-break-inside: avoid; 
     }
-    
+   /* Fix for doubled border on print view */
+    #material-list li:last-child {
+        border-bottom: none !important; 
+    } 
     .item-name {
         color: #000;
         font-weight: 600;
@@ -437,11 +445,14 @@ button {
         border-top: 1px solid #000;
         padding-top: 10px;
         /* Position at the very bottom of the page content */
-        position: fixed; 
+       /* position: fixed; 
         bottom: 0;
         left: 0;
         right: 0;
-        width: 100%;
+        width: 100%; */
+        /* Ensure the footer content stays on the same page */
+        page-break-before: avoid; 
+        page-break-after: avoid;
     }
 
     .qr-footer {
@@ -456,8 +467,5 @@ button {
         margin-bottom: 5px;
     }
     
-    /* Optional: Add space at the bottom of the main content to clear the fixed footer */
-    .container {
-        padding-bottom: 80px; 
-    }
+ 
 }

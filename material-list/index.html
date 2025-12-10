@@ -22,22 +22,26 @@
             <div class="input-group">
                 <label>Material</label>
                 <select id="item-material">
-                    <option value="MS">MS</option>
-                    <option value="SS" selected>SS</option>
+                    <option value="Mild_Steel" selected>MS</option>
+                    <option value="Stainless_304">SS</option>
+                    <option value="Aluminum_6061">AL</option>
                 </select>
             </div>
 
             <div class="input-group">
                 <label>Shape</label>
                 <select id="item-shape">
-                    <option value="angle">Angle</option>
+                    <option value="angle" selected>Angle</option>
                     <option value="flat">Flat</option>
-                    <option value="tube">Tube/Box</option>
+                    <option value="rod_round">RoundRod</option>
+                    <option value="rod_square">SquareRod</option>
+                    <option value="tube">Tube</option>
                     <option value="pipe">Pipe</option>
                     <option value="channel">Channel</option>
                     <option value="beam">Beam</option>
                     <option value="sheet">Sheet</option>
                     <option value="plate">Plate</option>
+                    <option value="consumables">Consumables</option>
                     <option value="custom">Custom</option>
                 </select>
             </div>
@@ -53,7 +57,7 @@
                     <input type="text" id="custom-description" placeholder="e.g., Grinding Wheel, Welding Rods">
                 </div>
                 <div class="input-group">
-                    <label>Value</label>
+                    <label>Weight</label>
                     <input type="number" id="custom-weight" value="1" min="0" step="0.1">
                 </div>
                 <div class="input-group">
@@ -84,21 +88,21 @@
 
         <div class="list-header">
             <span>Description</span>
-            <span style="text-align: right; margin-right: 15px;"> Weight (kg)</span>
-            <span style="text-align: center;">Qty (Nos)</span>
+            <span style="text-align: right; margin-right: 15px;">Approx.</span>
+            <span style="text-align: center;">Qty</span>
             <span class="no-print">Action</span>
         </div>
         <ul id="material-list"></ul>
         <button id="print-button" class="no-print" onclick="window.print()">🖨️ Print List (A5 PDF)</button>
     <div id="print-footer">
             <div class="footer-info">
-                For quick  detailed information, scan this QR code:
+                For contact more information, scan this QR code:
             </div>
             <img src="phone-qr.svg" alt="Contact QR Code" class="qr-footer">
         </div>
 
     </div>
-
+<script src="material-data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
