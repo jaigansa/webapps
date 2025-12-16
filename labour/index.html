@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck Body Shop Job Card</title>
+    <style>
+        :root { --primary: #1e3799; --accent: #f39c12; --bg: #eff1f3; --text: #2d3436; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 10px; color: var(--text); }
+        .container { max-width: 850px; margin: auto; padding-bottom: 220px; }
+
+        /* Shop Header */
+        .shop-header { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-top: 6px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .shop-header input { border: none; padding: 5px; font-weight: bold; color: var(--primary); text-align: center; background: transparent; }
+        .shop-name { font-size: 1.8rem; width: 100%; border-bottom: 1px dashed #ccc !important; margin-bottom: 5px; }
+        .shop-details { font-size: 0.9rem; width: 80%; color: #666; }
+
+        /* Sections */
+        .section { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        h2 { font-size: 1rem; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 8px; margin-top: 0; text-transform: uppercase; }
+        .item-row { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 45px; gap: 8px; margin-bottom: 10px; align-items: center; }
+
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
+        input:focus { border-color: var(--primary); outline: none; background: #fffdf9; }
+
+        .btn-add { background: #27ae60; color: white; border: none; padding: 12px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-del { color: #ff7675; border: 1px solid #ff7675; background: none; padding: 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+
+        /* Totals Card */
+        .summary-card { background: #2d3436; color: white; padding: 20px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; max-width: 850px; margin: auto; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); }
+        .grand-total { border-top: 1px solid #636e72; padding-top: 10px; margin-top: 8px; font-size: 1.6rem; font-weight: bold; color: var(--accent); display: flex; justify-content: space-between; }
+
+        @media (max-width: 600px) {
+            .item-row { grid-template-columns: 1fr 1fr; border: 1px solid #eee; padding: 10px; border-radius: 8px; background: #fafafa; }
+            .item-row input:first-child { grid-column: span 2; font-weight: bold; }
+            .subtotal-span { text-align: right; grid-column: span 1; font-weight: bold; }
+        }
+
+        /* Print Mode */
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print, .btn-add, .btn-del, button { display: none !important; }
+            .container { padding-bottom: 0; }
+            .summary-card { position: relative; background: white !important; color: black !important; border-top: 2px solid #000; border-radius: 0; margin-top: 20px; }
+            .grand-total { color: black !important; border-top: 2px solid black; }
+            input { border: none !important; padding: 2px 0; background: transparent !important; }
+            .section { border-radius: 0; box-shadow: none; border-bottom: 1px solid #eee; }
+            .item-row { grid-template-columns: 3fr 1fr 1fr 1fr !important; border: none !important; }
+            .signature-area { display: flex !important; justify-content: space-between; margin-top: 60px; text-align: center; font-weight: bold; }
+        }
+
+        .signature-area { display: none; }
+        .subtotal-span { font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="shop-header">
+        <input type="text" class="shop-name" placeholder="YOUR SHOP NAME HERE" value="JSR INDUSTRIES">
+        <center>
+            <input type="text" class="shop-details" placeholder="Address, City, State - Zip Code" value="Plot No. 82, Padappai, Chennai, Tamil Nadu">
+            <input type="text" class="shop-details" placeholder="ph: " value=" Ph: +91 9841685006">
+        </center>
+    </div>
+
+    <div class="section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div><label style="font-size:11px; font-weight:bold;">TRUCK REG. NO.</label><input type="text" placeholder="TN-00-XX-0000"></div>
+        <div><label style="font-size:11px; font-weight:bold;">DATE</label><input type="text" id="currentDate"></div>
+    </div>
+
+    <div class="section">
+        <h2>1. Labour Charges</h2>
+        <div id="labList">
+            <div class="item-row">
+                <input type="text" placeholder="Work (e.g. Body Tinkering)">
+                <input type="number" class="lQty" placeholder="Hrs" oninput="calc()">
+                <input type="number" class="lPrc" placeholder="Rate/Hr" oninput="calc()">
+                <span class="subtotal-span">₹<span class="lSub">0</span></span>
+                <button class="btn-del no-print" onclick="this.parentElement.remove();calc();">DEL</button>
+            </div>
+        </div>
+        <button class="btn-add no-print" onclick="addItem('labList', 'l')">+ Add Labour Item</button>
+    </div>
+
+    <div class="section">
+        <h2>2. Materials & Spares</h2>
+        <div id="matList">
+            <div class="item-row">
+                <input type="text" placeholder="Material (e.g. MS Sheet)">
+                <input type="number" class="mQty" placeholder="Qty" oninput="calc()">
+                <input type="number" class="mPrc" placeholder="Price" oninput="calc()">
+                <span class="subtotal-span">₹<span class="mSub">0</span></span>
+                <button class="btn-del no-print" onclick="this.parentElement.remove();calc();">DEL</button>
+            </div>
+        </div>
+        <button class="btn-add no-print" onclick="addItem('matList', 'm')">+ Add Material</button>
+    </div>
+
+    <div class="section">
+        <h2>3. Company Machine Usage</h2>
+        <div id="usageList">
+            <div class="item-row">
+                <input type="text" placeholder="Machine (e.g. Welding)">
+                <input type="number" class="uQty" placeholder="Hrs" oninput="calc()">
+                <input type="number" class="uPrc" placeholder="Rate/Hr" oninput="calc()">
+                <span class="subtotal-span">₹<span class="uSub">0</span></span>
+                <button class="btn-del no-print" onclick="this.parentElement.remove();calc();">DEL</button>
+            </div>
+        </div>
+        <button class="btn-add no-print" onclick="addItem('usageList', 'u')">+ Add Machine Usage</button>
+    </div>
+
+    <div class="summary-card">
+        <div class="no-print" style="margin-bottom:10px;">
+            <input type="checkbox" id="gstCheck" onchange="calc()" checked style="width:18px; height:18px; vertical-align:middle;">
+            <label style="font-weight:bold; font-size:14px;">Apply 18% GST</label>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:0.9rem;"><span>Taxable Value:</span> <span>₹<span id="resTaxable">0</span></span></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.9rem; color:#f39c12;"><span>GST (18%):</span> <span>₹<span id="resGst">0</span></span></div>
+        <div class="grand-total"><span>Net Total:</span> <span>₹<span id="resGrand">0</span></span></div>
+
+        <div class="signature-area">
+            <div><br>____________________<br>Customer Signature</div>
+            <div><br>____________________<br>For Shop Authorized</div>
+        </div>
+
+        <div class="no-print" style="display:flex; gap:10px; margin-top:15px;">
+            <button onclick="window.print()" style="background:white; color:black; flex:2;" class="btn-add">PRINT / PDF</button>
+            <button onclick="location.reload()" style="background:#636e72; color:white; flex:1;" class="btn-add">RESET</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('currentDate').value = new Date().toLocaleDateString('en-IN');
+
+    function addItem(containerId, prefix) {
+        const div = document.createElement('div');
+        div.className = 'item-row';
+        div.innerHTML = `
+            <input type="text" placeholder="Description">
+            <input type="number" class="${prefix}Qty" placeholder="Qty" oninput="calc()">
+            <input type="number" class="${prefix}Prc" placeholder="Rate" oninput="calc()">
+            <span class="subtotal-span">₹<span class="${prefix}Sub">0</span></span>
+            <button class="btn-del no-print" onclick="this.parentElement.remove();calc();">DEL</button>
+        `;
+        document.getElementById(containerId).appendChild(div);
+    }
+
+    function calc() {
+        let taxable = 0;
+        ['l','m','u'].forEach(type => {
+            const qtys = document.querySelectorAll(`.${type}Qty`);
+            const prcs = document.querySelectorAll(`.${type}Prc`);
+            const subs = document.querySelectorAll(`.${type}Sub`);
+            qtys.forEach((el, i) => {
+                const sub = (parseFloat(el.value) || 0) * (parseFloat(prcs[i].value) || 0);
+                subs[i].innerText = sub.toLocaleString('en-IN');
+                taxable += sub;
+            });
+        });
+        const gst = document.getElementById('gstCheck').checked ? (taxable * 0.18) : 0;
+        document.getElementById('resTaxable').innerText = taxable.toLocaleString('en-IN');
+        document.getElementById('resGst').innerText = gst.toLocaleString('en-IN');
+        document.getElementById('resGrand').innerText = (taxable + gst).toLocaleString('en-IN');
+    }
+</script>
+
+</body>
+</html>
