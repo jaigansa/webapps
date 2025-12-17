@@ -3,107 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Budget Master</title>
+    <title>Rupee Pro Tracker</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#4f46e5">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); }
-        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        input, select { font-size: 16px !important; } /* Prevents iOS zoom */
     </style>
 </head>
-<body class="bg-[#F4F7FA] text-slate-900 pb-20">
+<body class="bg-[#F8FAFC] text-slate-900 pb-20">
 
     <nav class="sticky top-0 z-50 glass-nav border-b border-slate-200 px-4 py-4 mb-6">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-extrabold tracking-tighter text-indigo-600">BUDGET.PRO</h1>
+            <h1 class="text-xl font-extrabold tracking-tighter text-indigo-600">RUPEE PRO</h1>
             <div class="flex gap-2">
-                <button onclick="exportData()" title="Backup" class="p-2 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition">
+                <button onclick="exportData()" class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 active:scale-95 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 </button>
-                <button onclick="document.getElementById('importFile').click()" title="Restore" class="p-2 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition">
+                <button onclick="document.getElementById('importFile').click()" class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 active:scale-95 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                 </button>
-                <input type="file" id="importFile" class="hidden" onchange="importData(event)">
+                <input type="file" id="importFile" accept="application/json,.json" class="hidden">
             </div>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto px-4">
         
-        <div class="bg-indigo-600 rounded-[2rem] p-8 text-white card-shadow mb-8 relative overflow-hidden">
-            <div class="relative z-10">
-                <div class="flex justify-between items-center mb-6">
-                    <span id="analysisLabel" class="text-xs font-bold uppercase tracking-widest opacity-70">Monthly Analysis</span>
-                    <select id="viewMode" onchange="render()" class="bg-indigo-500 text-white text-[10px] font-black border-none rounded-full px-4 py-2 outline-none">
-                        <option value="Monthly">MONTHLY VIEW</option>
-                        <option value="Yearly">YEARLY VIEW</option>
-                    </select>
+        <div class="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-indigo-200 mb-8">
+            <div class="flex justify-between items-center mb-8">
+                <span id="viewLabel" class="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">Monthly Projection</span>
+                <select id="viewMode" onchange="render()" class="bg-indigo-500 text-white text-[10px] font-black border-none rounded-full px-4 py-2 outline-none appearance-none">
+                    <option value="Monthly">MONTHLY VIEW</option>
+                    <option value="Yearly">YEARLY VIEW</option>
+                </select>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <p class="text-indigo-200 text-[10px] font-bold uppercase mb-1">Total Income</p>
+                    <h2 id="totalReceived" class="text-4xl font-extrabold tracking-tight">₹0</h2>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div>
-                        <p class="text-indigo-200 text-[10px] font-bold uppercase mb-1">Total Income</p>
-                        <h2 id="totalReceived" class="text-3xl font-extrabold">₹0</h2>
-                    </div>
-                    <div>
-                        <p class="text-indigo-200 text-[10px] font-bold uppercase mb-1">Total Spent</p>
-                        <h2 id="totalPaid" class="text-3xl font-extrabold">₹0</h2>
-                    </div>
-                    <div class="pt-6 md:pt-0 border-t md:border-t-0 md:border-l border-indigo-400 md:pl-8">
-                        <p class="text-indigo-200 text-[10px] font-bold uppercase mb-1">Expected Savings</p>
-                        <h2 id="netBalance" class="text-3xl font-extrabold">₹0</h2>
-                    </div>
+                <div>
+                    <p class="text-indigo-200 text-[10px] font-bold uppercase mb-1">Total Expenses</p>
+                    <h2 id="totalPaid" class="text-4xl font-extrabold tracking-tight">₹0</h2>
+                </div>
+                <div class="pt-6 md:pt-0 border-t md:border-t-0 md:border-l border-indigo-400/50 md:pl-8">
+                    <p class="text-indigo-200 text-[10px] font-bold uppercase mb-1">Expected Savings</p>
+                    <h2 id="netBalance" class="text-4xl font-extrabold tracking-tight">₹0</h2>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-[2rem] p-6 card-shadow mb-8 border border-slate-100">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 mb-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 <div class="lg:col-span-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Description</label>
-                    <input type="text" id="desc" placeholder="Rent, Salary, Dinner..." class="w-full bg-slate-50 p-4 rounded-2xl focus:ring-2 ring-indigo-500 transition border-none">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block tracking-widest">Entry Label</label>
+                    <input type="text" id="desc" placeholder="e.g. Salary, Rent, Tea" class="w-full bg-slate-50 p-4 rounded-2xl focus:ring-2 ring-indigo-500 transition border-none placeholder:text-slate-300">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Amount (₹)</label>
-                    <input type="number" id="amount" placeholder="0.00" class="w-full bg-slate-50 p-4 rounded-2xl focus:ring-2 ring-indigo-500 transition border-none">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block tracking-widest">Amount (₹)</label>
+                    <input type="number" id="amount" placeholder="0" class="w-full bg-slate-50 p-4 rounded-2xl focus:ring-2 ring-indigo-500 transition border-none placeholder:text-slate-300">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Category</label>
-                    <select id="category" class="w-full bg-slate-50 p-4 rounded-2xl appearance-none border-none">
-                        <option value="Essential">Essential (Rent/Bills)</option>
-                        <option value="Food">Food & Dining</option>
-                        <option value="Work">Work/Salary</option>
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block tracking-widest">Category</label>
+                    <select id="category" class="w-full bg-slate-50 p-4 rounded-2xl appearance-none border-none cursor-pointer">
+                        <option value="Essential">Essential</option>
+                        <option value="Food">Food</option>
+                        <option value="Work">Income/Work</option>
                         <option value="Shopping">Shopping</option>
                         <option value="Travel">Travel</option>
-                        <option value="Other">Other</option>
                     </select>
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Cycle</label>
-                    <select id="frequency" class="w-full bg-slate-50 p-4 rounded-2xl appearance-none border-none">
-                        <option value="One-Time">One-Time</option>
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block tracking-widest">Frequency</label>
+                    <select id="frequency" class="w-full bg-slate-50 p-4 rounded-2xl appearance-none border-none cursor-pointer">
                         <option value="Daily">Daily</option>
                         <option value="Weekly">Weekly</option>
                         <option value="Monthly">Monthly</option>
                         <option value="Yearly">Yearly</option>
+                        <option value="One-Time">One-Time</option>
                     </select>
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Type</label>
-                    <select id="type" class="w-full bg-slate-50 p-4 rounded-2xl appearance-none border-none font-bold">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block tracking-widest">Type</label>
+                    <select id="type" class="w-full bg-slate-50 p-4 rounded-2xl appearance-none border-none cursor-pointer font-bold">
                         <option value="Paid" class="text-red-500">I Paid</option>
-                        <option value="Received" class="text-green-600">I Got Paid</option>
+                        <option value="Received" class="text-emerald-600">Received</option>
                     </select>
                 </div>
-                <button onclick="addEntry()" class="lg:col-span-4 bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-black active:scale-[0.98] transition shadow-lg shadow-slate-200 uppercase text-xs tracking-widest">Add Transaction</button>
-                <button onclick="clearForm()" class="lg:col-span-2 bg-slate-100 text-slate-500 font-bold py-4 rounded-2xl hover:bg-slate-200 transition uppercase text-xs tracking-widest">Clear Form</button>
+                <button onclick="addEntry()" class="lg:col-span-4 bg-slate-900 text-white font-bold py-5 rounded-2xl hover:bg-black active:scale-[0.97] transition shadow-xl shadow-slate-200 uppercase text-xs tracking-widest">Add to Ledger</button>
+                <button onclick="clearForm()" class="lg:col-span-2 bg-slate-100 text-slate-500 font-bold py-5 rounded-2xl hover:bg-slate-200 transition uppercase text-xs tracking-widest">Clear</button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
             <section>
                 <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 px-2">Income Stream</h4>
                 <div id="receivedList" class="space-y-4"></div>
@@ -111,7 +111,7 @@
             <section>
                 <div class="flex justify-between items-center mb-4 px-2">
                     <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Expense Stream</h4>
-                    <button onclick="clearAllData()" class="text-[10px] font-black text-red-300 uppercase hover:text-red-500 transition">Reset All</button>
+                    <button onclick="clearAllData()" class="text-[10px] font-black text-red-300 hover:text-red-500 uppercase transition">Reset Storage</button>
                 </div>
                 <div id="paidList" class="space-y-4"></div>
             </section>
@@ -119,7 +119,31 @@
     </main>
 
     <script>
-        let entries = JSON.parse(localStorage.getItem('rupee_master_v6')) || [];
+        let entries = JSON.parse(localStorage.getItem('rupee_final_v7')) || [];
+
+        // 🟢 ANDROID FIX: Improved Event Listener for File Restore
+        document.getElementById('importFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    if (Array.isArray(data)) {
+                        entries = data;
+                        saveAndRender();
+                        alert("✅ Data Restored Successfully!");
+                    } else {
+                        alert("❌ Invalid Backup File Format");
+                    }
+                } catch (err) {
+                    alert("❌ Error: Could not parse JSON data.");
+                }
+                e.target.value = ''; // Reset input
+            };
+            reader.readAsText(file);
+        }, false);
 
         function addEntry() {
             const desc = document.getElementById('desc').value;
@@ -127,9 +151,9 @@
             const category = document.getElementById('category').value;
             const frequency = document.getElementById('frequency').value;
             const type = document.getElementById('type').value;
-            const date = new Date().toLocaleDateString('en-IN');
+            const date = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
 
-            if(!desc || isNaN(amount)) return alert("Description and Amount required");
+            if(!desc || isNaN(amount)) return alert("Please fill amount and description");
 
             entries.push({ id: Date.now(), desc, amount, category, frequency, type, date });
             saveAndRender();
@@ -142,64 +166,66 @@
         }
 
         function deleteEntry(id) {
-            if(confirm("Delete this record?")) {
+            if(confirm("Permanently delete this entry?")) {
                 entries = entries.filter(e => e.id !== id);
                 saveAndRender();
             }
         }
 
         function clearAllData() {
-            if(confirm("Permanently wipe all financial history?")) {
+            if(confirm("WARNING: Wipe all data? This cannot be undone.")) {
                 entries = [];
                 saveAndRender();
             }
         }
 
         function saveAndRender() {
-            localStorage.setItem('rupee_master_v6', JSON.stringify(entries));
+            localStorage.setItem('rupee_final_v7', JSON.stringify(entries));
             render();
         }
 
         function getNormalized(e, mode) {
             let yearly = 0;
-            if(e.frequency === 'Daily') yearly = e.amount * 365;
-            else if(e.frequency === 'Weekly') yearly = e.amount * 52;
-            else if(e.frequency === 'Monthly') yearly = e.amount * 12;
-            else if(e.frequency === 'Yearly') yearly = e.amount;
-            else if(e.frequency === 'One-Time') yearly = e.amount;
-
+            switch(e.frequency) {
+                case 'Daily': yearly = e.amount * 365; break;
+                case 'Weekly': yearly = e.amount * 52; break;
+                case 'Monthly': yearly = e.amount * 12; break;
+                case 'Yearly': yearly = e.amount; break;
+                case 'One-Time': yearly = e.amount; break;
+            }
             return mode === 'Yearly' ? yearly : (yearly / 12);
         }
 
         function render() {
             const mode = document.getElementById('viewMode').value;
-            document.getElementById('analysisLabel').innerText = `${mode} Analysis`;
+            document.getElementById('viewLabel').innerText = `${mode} Projection`;
             
             const lists = { Paid: document.getElementById('paidList'), Received: document.getElementById('receivedList') };
             let sums = { Paid: 0, Received: 0 };
             
             lists.Paid.innerHTML = ''; lists.Received.innerHTML = '';
 
+            // Render list in reverse (newest first)
             entries.slice().reverse().forEach(e => {
                 const impact = getNormalized(e, mode);
                 const li = document.createElement('div');
-                li.className = "group bg-white p-5 rounded-[1.5rem] card-shadow border border-slate-100 flex justify-between items-center transition hover:border-indigo-200";
+                li.className = "bg-white p-5 rounded-[1.8rem] border border-slate-100 flex justify-between items-center shadow-sm hover:border-indigo-300 transition-all";
                 li.innerHTML = `
-                    <div>
+                    <div class="flex-1">
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-[8px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-black uppercase tracking-widest">${e.category}</span>
-                            <span class="text-[8px] text-slate-300 font-bold uppercase">${e.date}</span>
+                            <span class="text-[8px] font-black uppercase text-indigo-400 border border-indigo-100 px-2 py-0.5 rounded-full">${e.category}</span>
+                            <span class="text-[8px] font-bold text-slate-300 uppercase">${e.date}</span>
                         </div>
-                        <p class="font-extrabold text-slate-800 leading-none">${e.desc}</p>
-                        <p class="text-[10px] text-slate-400 mt-1 font-semibold uppercase tracking-tight">
-                            ${e.frequency} • Actual: ₹${e.amount.toLocaleString('en-IN')}
+                        <p class="font-extrabold text-slate-800 tracking-tight">${e.desc}</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase mt-0.5">
+                            ${e.frequency} @ ₹${e.amount.toLocaleString('en-IN')}
                         </p>
                     </div>
-                    <div class="text-right flex flex-col items-end">
+                    <div class="text-right">
                         <p class="font-black ${e.type === 'Paid' ? 'text-rose-500' : 'text-emerald-500'} text-base">
                             ₹${Math.round(impact).toLocaleString('en-IN')}
                         </p>
-                        <button onclick="deleteEntry(${e.id})" class="text-[9px] font-black text-slate-200 hover:text-red-500 uppercase tracking-tighter mt-1 transition">Remove</button>
+                        <button onclick="deleteEntry(${e.id})" class="text-[9px] font-black text-slate-300 hover:text-red-400 uppercase tracking-tighter transition">Delete</button>
                     </div>
                 `;
                 lists[e.type].appendChild(li);
@@ -214,13 +240,9 @@
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entries));
             const a = document.createElement('a');
-            a.href = dataStr; a.download = `rupee_master_backup.json`; a.click();
-        }
-
-        function importData(event) {
-            const reader = new FileReader();
-            reader.onload = e => { try { entries = JSON.parse(e.target.result); saveAndRender(); } catch(err) { alert("Invalid backup file."); } };
-            reader.readAsText(event.target.files[0]);
+            a.href = dataStr; 
+            a.download = `rupee_backup_${new Date().toISOString().slice(0,10)}.json`; 
+            a.click();
         }
 
         render();
