@@ -4,88 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Bill Tracker Pro</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1d4ed8">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Prevents zoom on input focus in iOS */
         input, select { font-size: 16px !important; }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 p-2 md:p-8">
+<body class="bg-gray-50 text-gray-800 p-2 md:p-6 lg:p-8">
 
-    <div class="max-w-5xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm gap-4">
-            <div class="text-center md:text-left">
+    <div class="max-w-4xl mx-auto">
+        <header class="flex flex-col sm:flex-row justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100 gap-4">
+            <div class="text-center sm:text-left">
                 <h1 class="text-2xl font-black text-blue-700 tracking-tight">BILL TRACKER</h1>
-                <p class="text-xs text-gray-400 font-medium">LOCAL STORAGE ENABLED</p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Offline Local Storage</p>
             </div>
             <div class="flex flex-wrap justify-center gap-2">
-                <button onclick="exportData()" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-100 transition">Backup</button>
-                <button onclick="document.getElementById('importFile').click()" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-100 transition">Restore</button>
-                <button onclick="clearAllData()" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-100 transition">Clear All</button>
+                <button onclick="exportData()" class="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 transition">Backup</button>
+                <button onclick="document.getElementById('importFile').click()" class="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 transition">Restore</button>
+                <button onclick="clearAllData()" class="bg-red-50 text-red-600 px-3 py-2 rounded-lg text-xs font-bold hover:bg-red-100 transition">Clear All</button>
                 <input type="file" id="importFile" class="hidden" onchange="importData(event)">
             </div>
         </header>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
             <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-red-500">
-                <p class="text-gray-400 text-xs font-bold uppercase">I Paid</p>
-                <p id="totalPaid" class="text-xl font-bold text-red-600">$0.00</p>
+                <p class="text-gray-400 text-[10px] font-bold uppercase">I Paid</p>
+                <p id="totalPaid" class="text-xl font-black text-red-600">$0.00</p>
             </div>
             <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-green-500">
-                <p class="text-gray-400 text-xs font-bold uppercase">Recieved</p>
-                <p id="totalReceived" class="text-xl font-bold text-green-600">$0.00</p>
+                <p class="text-gray-400 text-[10px] font-bold uppercase">Received</p>
+                <p id="totalReceived" class="text-xl font-black text-green-600">$0.00</p>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-blue-500">
-                <p class="text-gray-400 text-xs font-bold uppercase">Balance</p>
-                <p id="netBalance" class="text-xl font-bold text-blue-700">$0.00</p>
+            <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-blue-600">
+                <p class="text-gray-400 text-[10px] font-bold uppercase">Balance</p>
+                <p id="netBalance" class="text-xl font-black text-blue-700">$0.00</p>
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl shadow-md mb-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div class="lg:col-span-2">
-                    <label class="text-xs font-bold text-gray-400 ml-1">DESCRIPTION</label>
-                    <input type="text" id="desc" placeholder="e.g. Rent, Freelance Pay" class="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-blue-500 outline-none transition">
+        <div class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="md:col-span-2">
+                    <label class="text-[10px] font-black text-gray-400 ml-1 uppercase">Description</label>
+                    <input type="text" id="desc" placeholder="e.g. Electricity, Salary" class="w-full border-2 border-gray-50 bg-gray-50 p-3 rounded-xl focus:border-blue-400 focus:bg-white outline-none transition">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-400 ml-1">AMOUNT</label>
-                    <input type="number" id="amount" placeholder="0.00" class="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-blue-500 outline-none transition">
+                    <label class="text-[10px] font-black text-gray-400 ml-1 uppercase">Amount</label>
+                    <input type="number" id="amount" placeholder="0.00" class="w-full border-2 border-gray-50 bg-gray-50 p-3 rounded-xl focus:border-blue-400 focus:bg-white outline-none transition">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-400 ml-1">TYPE</label>
-                    <select id="type" class="w-full border-2 border-gray-100 p-3 rounded-xl bg-white outline-none">
+                    <label class="text-[10px] font-black text-gray-400 ml-1 uppercase">Type</label>
+                    <select id="type" class="w-full border-2 border-gray-50 bg-gray-50 p-3 rounded-xl outline-none">
                         <option value="Paid">I Paid</option>
-                        <option value="Received">Received</option>
+                        <option value="Received">Others Paid Me</option>
                     </select>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-400 ml-1">CYCLE</label>
-                    <select id="frequency" class="w-full border-2 border-gray-100 p-3 rounded-xl bg-white outline-none">
+                <div class="sm:col-span-2 md:col-span-1">
+                    <label class="text-[10px] font-black text-gray-400 ml-1 uppercase">Cycle</label>
+                    <select id="frequency" class="w-full border-2 border-gray-50 bg-gray-50 p-3 rounded-xl outline-none">
                         <option value="Daily">Daily</option>
                         <option value="Monthly">Monthly</option>
                         <option value="Yearly">Yearly</option>
                     </select>
                 </div>
-                <button onclick="addEntry()" class="sm:col-span-2 lg:col-span-5 bg-blue-600 text-white py-4 rounded-xl font-black text-lg hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-200">
-                    ADD ENTRY +
-                </button>
+                
+                <div class="md:col-span-4 grid grid-cols-3 gap-3">
+                    <button onclick="addEntry()" class="col-span-2 bg-blue-600 text-white py-4 rounded-xl font-black text-sm uppercase hover:bg-blue-700 active:scale-95 transition-all shadow-md">
+                        Add Entry
+                    </button>
+                    <button onclick="clearForm()" class="bg-gray-100 text-gray-500 py-4 rounded-xl font-black text-sm uppercase hover:bg-gray-200 active:scale-95 transition-all">
+                        Clear
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
             <section>
-                <h2 class="text-sm font-black text-gray-400 mb-4 px-2 tracking-widest uppercase">🔴 Outgoing Expenses</h2>
+                <h2 class="text-xs font-black text-gray-400 mb-3 px-2 tracking-widest uppercase">Expenses (Paid)</h2>
                 <div id="paidList" class="space-y-3"></div>
             </section>
             <section>
-                <h2 class="text-sm font-black text-gray-400 mb-4 px-2 tracking-widest uppercase">🟢 Incoming Payments</h2>
+                <h2 class="text-xs font-black text-gray-400 mb-3 px-2 tracking-widest uppercase">Income (Received)</h2>
                 <div id="receivedList" class="space-y-3"></div>
             </section>
         </div>
     </div>
 
     <script>
-        let entries = JSON.parse(localStorage.getItem('my_bills_data')) || [];
+        let entries = JSON.parse(localStorage.getItem('my_finance_data')) || [];
 
         function addEntry() {
             const desc = document.getElementById('desc').value;
@@ -93,15 +106,14 @@
             const type = document.getElementById('type').value;
             const frequency = document.getElementById('frequency').value;
 
-            if(!desc || isNaN(amount)) {
-                alert("Please enter a description and amount");
-                return;
-            }
+            if(!desc || isNaN(amount)) return alert("Fill in Description and Amount");
 
             entries.push({ id: Date.now(), desc, amount, type, frequency });
             saveAndRender();
-            
-            // Clear inputs
+            clearForm();
+        }
+
+        function clearForm() {
             document.getElementById('desc').value = '';
             document.getElementById('amount').value = '';
         }
@@ -114,72 +126,57 @@
         }
 
         function clearAllData() {
-            if(confirm("WARNING: This will delete ALL your entries. Are you sure?")) {
+            if(confirm("Wipe all data? This cannot be undone.")) {
                 entries = [];
                 saveAndRender();
             }
         }
 
         function saveAndRender() {
-            localStorage.setItem('my_bills_data', JSON.stringify(entries));
+            localStorage.setItem('my_finance_data', JSON.stringify(entries));
             render();
         }
 
         function render() {
-            const paidList = document.getElementById('paidList');
-            const receivedList = document.getElementById('receivedList');
-            let sumPaid = 0;
-            let sumReceived = 0;
+            const lists = { Paid: document.getElementById('paidList'), Received: document.getElementById('receivedList') };
+            let sums = { Paid: 0, Received: 0 };
+            
+            lists.Paid.innerHTML = '';
+            lists.Received.innerHTML = '';
 
-            paidList.innerHTML = '';
-            receivedList.innerHTML = '';
-
-            entries.forEach(entry => {
+            entries.forEach(e => {
                 const li = document.createElement('div');
-                li.className = "flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border-l-8 " + (entry.type === 'Paid' ? 'border-red-400' : 'border-green-400');
+                li.className = `flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border-l-4 ${e.type==='Paid'?'border-red-500':'border-green-500'}`;
                 li.innerHTML = `
-                    <div class="flex-1">
-                        <p class="font-bold text-gray-800 leading-tight">${entry.desc}</p>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">${entry.frequency}</p>
+                    <div>
+                        <p class="font-bold text-gray-800 leading-tight">${e.desc}</p>
+                        <p class="text-[9px] text-gray-400 font-black uppercase">${e.frequency}</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-black ${entry.type === 'Paid' ? 'text-red-500' : 'text-green-600'} text-lg">$${entry.amount.toFixed(2)}</p>
-                        <button onclick="deleteEntry(${entry.id})" class="text-[10px] font-bold text-gray-300 hover:text-red-500 uppercase">Remove</button>
-                    </div>
-                `;
-
-                if(entry.type === 'Paid') {
-                    paidList.appendChild(li);
-                    sumPaid += entry.amount;
-                } else {
-                    receivedList.appendChild(li);
-                    sumReceived += entry.amount;
-                }
+                        <p class="font-black ${e.type==='Paid'?'text-red-500':'text-green-600'}">$${e.amount.toFixed(2)}</p>
+                        <button onclick="deleteEntry(${e.id})" class="text-[10px] font-bold text-gray-300 hover:text-red-500 uppercase">Remove</button>
+                    </div>`;
+                lists[e.type].appendChild(li);
+                sums[e.type] += e.amount;
             });
 
-            document.getElementById('totalPaid').innerText = `$${sumPaid.toFixed(2)}`;
-            document.getElementById('totalReceived').innerText = `$${sumReceived.toFixed(2)}`;
-            document.getElementById('netBalance').innerText = `$${(sumReceived - sumPaid).toFixed(2)}`;
+            document.getElementById('totalPaid').innerText = `$${sums.Paid.toFixed(2)}`;
+            document.getElementById('totalReceived').innerText = `$${sums.Received.toFixed(2)}`;
+            document.getElementById('netBalance').innerText = `$${(sums.Received - sums.Paid).toFixed(2)}`;
         }
 
         function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(entries));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", "my_finance_backup.json");
-            dlAnchor.click();
+            const blob = new Blob([JSON.stringify(entries)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
         }
 
         function importData(event) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    entries = JSON.parse(e.target.result);
-                    saveAndRender();
-                } catch(err) {
-                    alert("Invalid backup file.");
-                }
-            };
+            reader.onload = e => { entries = JSON.parse(e.target.result); saveAndRender(); };
             reader.readAsText(event.target.files[0]);
         }
 
