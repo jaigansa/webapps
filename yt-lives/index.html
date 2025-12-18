@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jai Streams Multi-Monitor</title>
+    <style>
+        :root { --bg: #000; --card: #121212; --accent: #ff0000; --text: #fff; --border: #282828; }
+        
+        body { 
+            margin: 0; background: var(--bg); color: var(--text); 
+            font-family: -apple-system, system-ui, sans-serif; 
+            overscroll-behavior: contain;
+        }
+
+        header { 
+            background: var(--card); padding: 12px; 
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+
+        .input-row { display: flex; flex-direction: column; gap: 8px; }
+        input { 
+            background: #1a1a1a; border: 1px solid #333; color: #fff; 
+            padding: 12px; border-radius: 8px; font-size: 16px; outline: none;
+        }
+        input:focus { border-color: var(--accent); }
+
+        .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+        button { 
+            flex: 1; padding: 12px; border: none; border-radius: 8px; 
+            font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .btn-add { background: var(--accent); color: white; }
+        .btn-util { background: #252525; color: #aaa; font-size: 11px; }
+        button:active { transform: scale(0.95); opacity: 0.8; }
+
+        #grid { 
+            display: grid; grid-template-columns: 1fr; 
+            gap: 12px; padding: 12px; 
+        }
+        @media (min-width: 768px) { #grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1200px) { #grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+        .card-info { padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; }
+        .name { font-size: 13px; font-weight: 700; color: #eee; }
+        .status { font-family: monospace; font-size: 11px; font-weight: bold; }
+        .live { color: #00ff00; }
+        .off { color: #ff4444; }
+
+        .video-box { aspect-ratio: 16/9; background: #050505; display: flex; align-items: center; justify-content: center; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .loader { width: 20px; height: 20px; border: 2px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="input-row">
+        <input type="text" id="nameIn" placeholder="Channel Name">
+        <input type="text" id="idIn" placeholder="Channel ID or URL">
+        <button class="btn-add" onclick="add()">+ ADD STREAM</button>
+    </div>
+    <div class="btn-row">
+        <button class="btn-util" onclick="render()">🔄 REFRESH ALL</button>
+        <button class="btn-util" onclick="exportData()">💾 EXPORT</button>
+        <button class="btn-util" onclick="document.getElementById('fileIn').click()">📂 IMPORT</button>
+        <input type="file" id="fileIn" style="display:none" onchange="importData(event)">
+    </div>
+</header>
+
+<div id="grid"></div>
+
+<script>
+    let streams = JSON.parse(localStorage.getItem('jaiMonitorV1')) || [
+        { name: "Jai Streams", id: "UCDVQ_kvZUAmEqa6w9umMflg" }
+    ];
+
+    function extractID(input) {
+        // Automatically extracts UCID even if user pastes a full URL
+        const match = input.match(/(UC[a-zA-Z0-9_-]{22})/);
+        return match ? match[0] : input.trim();
+    }
+
+    function save() {
+        localStorage.setItem('jaiMonitorV1', JSON.stringify(streams));
+        render();
+    }
+
+    function add() {
+        const n = document.getElementById('nameIn').value;
+        const i = extractID(document.getElementById('idIn').value);
+        if (n && i) {
+            streams.push({ name: n, id: i });
+            document.getElementById('nameIn').value = '';
+            document.getElementById('idIn').value = '';
+            save();
+        } else {
+            alert("Please enter a name and a valid Channel ID");
+        }
+    }
+
+    function remove(idx) {
+        if(confirm("Remove this stream?")) {
+            streams.splice(idx, 1);
+            save();
+        }
+    }
+
+    async function fetchLive(cid) {
+        try {
+            const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + cid)}`;
+            const res = await fetch(proxy);
+            const data = await res.json();
+            const xml = new DOMParser().parseFromString(data.contents, "text/xml");
+            return xml.getElementsByTagName("yt:videoId")[0].textContent;
+        } catch (e) { return null; }
+    }
+
+    async function render() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = ''; // Clears existing iframes to save RAM
+        
+        streams.forEach((item, i) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-info">
+                    <span class="name">${item.name}</span>
+                    <span class="status" id="stat-${i}">CHECKING...</span>
+                    <span style="color:#444; cursor:pointer" onclick="remove(${i})">✕</span>
+                </div>
+                <div class="video-box" id="vid-${i}"><div class="loader"></div></div>
+            `;
+            grid.appendChild(card);
+
+            fetchLive(item.id).then(vId => {
+                const statEl = document.getElementById(`stat-${i}`);
+                const vidEl = document.getElementById(`vid-${i}`);
+                if (vId) {
+                    statEl.innerHTML = `<span class="live">● LIVE</span>`;
+                    vidEl.innerHTML = `<iframe src="https://www.youtube.com/embed/${vId}?autoplay=1&mute=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                } else {
+                    statEl.innerHTML = `<span class="off">OFFLINE</span>`;
+                    vidEl.innerHTML = `<div style="color:#333; font-size:12px">No Active Stream</div>`;
+                }
+            });
+        });
+    }
+
+    function exportData() {
+        const blob = new Blob([JSON.stringify(streams)], {type:'application/json'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'jai_monitor_backup.json'; a.click();
+    }
+
+    function importData(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => { streams = JSON.parse(ev.target.result); save(); };
+        reader.readAsText(e.target.files[0]);
+    }
+
+    render();
+</script>
+</body>
+</html>
