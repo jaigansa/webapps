@@ -193,13 +193,34 @@ function resetForm() {
 }
 
 function shareWhatsApp() {
+    // Collect measurements
+    const L = document.getElementById('totalWidth').value;
+    const H = document.getElementById('totalHeight').value;
+    const n = document.getElementById('barCount').value;
     const unit = document.getElementById('unitSelect').value;
-    let msg = `*GRILL SHOP REPORT [${unit.toUpperCase()}]*\n`;
-    msg += `Clear Gap: ${document.getElementById('gapRes').innerText}\n`;
+    const spacer = document.getElementById('spacerRes').innerText;
+    
+    // Header
+    let msg = `*🛠️ SRI JAIGANESH INDUSTRY*\n`;
+    msg += `*GRILL FABRICATION REPORT*\n\n`;
+    msg += `*FRAME:* ${L} x ${H} ${unit}\n`;
+    msg += `*RODS:* ${n} Nos\n`;
+    msg += `*SPACER JIG:* ${spacer}\n`;
     msg += `--------------------------\n`;
-    document.querySelectorAll("#markTable tr").forEach(row => {
+    msg += `*MARKING LIST (${unit})*\n`;
+
+    // Loop through table rows to add rod data
+    const rows = document.querySelectorAll("#markTable tr");
+    rows.forEach((row) => {
         const cols = row.querySelectorAll("td");
-        msg += `• ${cols[0].innerText}: ${cols[1].innerText} | ${cols[2].innerText} | ${cols[3].innerText}\n`;
+        if(cols.length >= 4) {
+            msg += `• ${cols[0].innerText}: ${cols[1].innerText} | ${cols[2].innerText} | ${cols[3].innerText}\n`;
+        }
     });
+
+    msg += `--------------------------\n`;
+    msg += `_Sent via Gap Finder Pro_`;
+
+    // Open WhatsApp Link
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
