@@ -3,125 +3,130 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Web Apps</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apps</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@28,400,0,0" />
 
     <style>
         :root {
-            --bg-base: #24273a;
-            --bg-surface: #1e2030;
-            --border-color: #363a4f;
-            --text-main: #cad3f5;
-            --text-muted: #b8c0e0;
-            --accent: #8aadf4;
-            --accent-alt: #a6da95;
-            --accent-soft: #b7bdf8;
-            --radius: 18px;
+            /* Pure Android Dark Palette */
+            --md-surface: #0f1115;
+            --md-surface-variant: #1d1f24;
+            --md-on-surface: #e2e2e6;
+            --md-on-surface-variant: #c4c6d0;
+            --md-primary-fixed: #d8e2ff;
+            --font-main: 'Inter', sans-serif;
         }
 
         body {
             margin: 0;
-            background: var(--bg-base);
-            color: var(--text-main);
-            font-family: system-ui, sans-serif;
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            font-family: var(--font-main);
+            -webkit-tap-highlight-color: transparent;
+            padding-top: env(safe-area-inset-top);
+        }
+
+        /* Top Bar - "Apps" Header */
+        .app-bar {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 26px;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            position: sticky;
+            top: 0;
+            background: var(--md-surface);
+            z-index: 100;
         }
 
         .container {
-            max-width: 1100px;
-            margin: auto;
-            padding: 40px 20px;
+            padding: 12px 20px;
         }
 
-        .section-title {
-            text-align: center;
-            font-size: 36px;
-            margin-bottom: 35px;
-            color: var(--accent-soft);
-            animation: fadeIn 0.8s ease;
-        }
-
-        /* GRID */
-        .webapp-grid {
+        /* Grid - 3 Columns (Standard Android) */
+        .app-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 22px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            row-gap: 32px;
         }
 
-        /* CARD */
-        .webapp-card {
-            background: var(--bg-surface);
-            padding: 22px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-            transition: 0.35s ease;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-            animation: fadeUp 0.6s ease both;
-        }
-
-        .webapp-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--accent);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-        }
-
-        .webapp-card__icon {
-            font-size: 32px;
-            color: var(--accent);
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .webapp-card__title {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 8px;
-            color: var(--accent-soft);
-        }
-
-        .webapp-card__desc {
-            font-size: 14px;
-            margin: 0 0 18px;
-            color: var(--text-muted);
-        }
-
-        .webapp-card__btn {
-            background: var(--accent);
-            padding: 9px 14px;
-            border-radius: var(--radius);
+        /* Individual App Item */
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-decoration: none;
-            color: #1e2030;
-            font-weight: 600;
-            transition: 0.25s ease;
-            display: inline-block;
+            color: inherit;
+            outline: none;
         }
 
-        .webapp-card__btn:hover {
-            background: var(--accent-alt);
+        /* Fully Rounded Icon Container (Circle) */
+        .icon-container {
+            width: clamp(64px, 18vw, 72px);
+            height: clamp(64px, 18vw, 72px);
+            background-color: var(--md-surface-variant);
+            border-radius: 50%; /* FULL ROUND */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* Animations */
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Tap Animation */
+        .app-item:active .icon-container {
+            transform: scale(0.9);
+            background-color: #2a2d35;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
+        /* Material Symbol Style */
+        .icon-container .material-symbols-rounded {
+            font-size: 30px;
+            color: var(--md-primary-fixed);
+        }
 
-            to {
-                opacity: 1;
+        /* Placeholder for your future SVG Logos */
+        .icon-container svg {
+            width: 55%;
+            height: 55%;
+        }
+
+        /* App Name Label */
+        .app-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--md-on-surface-variant);
+            text-align: center;
+            letter-spacing: 0.1px;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Desktop Optimization */
+        @media (min-width: 600px) {
+            .app-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                max-width: 800px;
+                margin: 20px auto;
+            }
+            .app-bar {
+                max-width: 800px;
+                margin: auto;
+                padding: 40px 0 20px 0;
+                font-size: 32px;
             }
         }
     </style>
@@ -129,108 +134,42 @@
 
 <body>
 
-    <div class="container">
-        <h1 class="section-title">Web Apps</h1>
-        <div id="webappGrid" class="webapp-grid"></div>
-    </div>
+    <header class="app-bar">
+        Apps
+    </header>
+
+    <main class="container">
+        <div id="webappGrid" class="app-grid"></div>
+    </main>
 
     <script>
         const webapps = [
-           
-           
-            {
-                icon: "bi-gear",
-                title: "Gap Finder",
-                desc: "grill gap finder",
-                link: "gap-finder",
-                btn: "Open"
-            },
-            {
-                icon: "bi-youtube",
-                title: "YT LIVES",
-                desc: "multi yt live player",
-                link: "yt-lives",
-                btn: "Open"
-            },
-            {
-                icon: "bi-cash-stack",
-                title: "Budget Master",
-                desc: "budget tracker income expenses",
-                link: "budget",
-                btn: "Open"
-            },
-            {
-                icon: "bi-hammer",
-                title: "Labour",
-                desc: "labour calculations",
-                link: "labour",
-                btn: "Open"
-            },
-            {
-                icon: "bi-tools",
-                title: "Material list",
-                desc: "Purchase Material list",
-                link: "material-list",
-                btn: "Open"
-            },
-            {
-                icon: "bi-calculator",
-                title: "Tamil Calculator",
-                desc: "Tamil number calculations",
-                link: "tamilcalc",
-                btn: "Open"
-            },
-            {
-                icon: "bi-font-file",
-                title: "Font Preview",
-                desc: "local font file previewer",
-                link: "font-previewer",
-                btn: "Open"
-            },
-            {
-                icon: "bi-cart-check-fill",
-                title: "Grocery List",
-                desc: "Print-friendly grocery list",
-                link: "grocery-list",
-                btn: "Open"
-            },
-            {
-                icon: "bi-gear-fill",
-                title: "Font Converter",
-                desc: "Tamil font converter",
-                link: "tamcon",
-                btn: "Convert"
-            },
-            {
-                icon: "bi-receipt",
-                title: "Estimate",
-                desc: "Work estimate calculator",
-                link: "estimate",
-                btn: "Calculate"
-            },
-            {
-                icon: "bi-whatsapp",
-                title: "Easy Chat",
-                desc: "WhatsApp without saving number",
-                link: "quick-wa",
-                btn: "Start"
-            }
+            { icon: "notifications_active", title: "Memory", link: "memory-hub" },
+            { icon: "architecture", title: "Gap Finder", link: "gap-finder" },
+            { icon: "play_circle", title: "YT Lives", link: "yt-lives" },
+            { icon: "payments", title: "Budget", link: "budget" },
+            { icon: "engineering", title: "Labour", link: "labour" },
+            { icon: "inventory_2", title: "Materials", link: "material-list" },
+            { icon: "calculate", title: "Tamil Calc", link: "tamilcalc" },
+            { icon: "shopping_basket", title: "Groceries", link: "grocery-list" },
+            { icon: "translate", title: "Converter", link: "tamcon" },
+            { icon: "description", title: "Estimate", link: "estimate" },
+            { icon: "chat", title: "Easy Chat", link: "quick-wa" }
         ];
 
         const grid = document.getElementById("webappGrid");
 
-        webapps.forEach((app, index) => {
+        webapps.forEach(app => {
             grid.innerHTML += `
-                <div class="webapp-card" style="animation-delay:${index * 0.08}s">
-                    <i class="webapp-card__icon ${app.icon}"></i>
-                    <h3 class="webapp-card__title">${app.title}</h3>
-                    <p class="webapp-card__desc">${app.desc}</p>
-                    <a href="${app.link}" class="webapp-card__btn">${app.btn}</a>
-                </div>`;
+                <a href="${app.link}" class="app-item">
+                    <div class="icon-container">
+                        <span class="material-symbols-rounded">${app.icon}</span>
+                    </div>
+                    <span class="app-label">${app.title}</span>
+                </a>`;
         });
     </script>
 
 </body>
 
 </html>
-

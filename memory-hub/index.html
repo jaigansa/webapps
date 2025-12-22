@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Memory Hub Pro</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4A90E2">
+    <link rel="apple-touch-icon" href="/images/icon-192.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+
+</head>
+<body data-theme="dark">
+
+<div class="app-header">
+    <div class="top-row">
+        <div>
+            <div id="header-date" style="font-size:0.75rem; opacity:0.6; font-weight:800; text-transform:uppercase;">...</div>
+            <div style="font-size:1.8rem; font-weight:800; letter-spacing:-1px;">Memory Hub</div>
+        </div>
+        <button class="icon-btn" onclick="toggleSettings(true)"><span class="material-symbols-rounded">settings</span></button>
+    </div>
+</div>
+
+<div class="filter-row" id="filter-bar">
+    <div class="filter-pill active" onclick="setFilter('all', this)">All</div>
+    <div class="filter-pill" onclick="setFilter('pending', this)">Pending</div>
+    <div class="filter-pill" onclick="setFilter('completed', this)">Completed</div>
+</div>
+
+<main>
+    <div id="tab-bills" class="tab-content" style="display:block;">
+        <div class="hero-stats">
+            <div style="font-size:0.85rem; opacity:0.8;">Unpaid Balance</div>
+            <div id="bill-big-stat" class="big-stat">₹0</div>
+        </div>
+        <div id="bill-list"></div>
+    </div>
+    <div id="tab-tasks" class="tab-content" style="display:none;">
+        <div class="hero-stats" style="background: linear-gradient(135deg, #00897b, #00695c);">
+            <div style="font-size:0.85rem; opacity:0.8;">Active Tasks</div>
+            <div id="task-big-stat" class="big-stat">0</div>
+        </div>
+        <div id="task-list"></div>
+    </div>
+    <div id="tab-news" class="tab-content" style="display:none;">
+        <div style="padding: 0 20px; margin-bottom: 10px; font-size: 0.7rem; font-weight: 800; opacity: 0.5;">ACTIVE FEED</div>
+        <select id="feed-selector" onchange="fetchNews()"></select>
+        <div id="news-list"></div>
+        <div class="manage-feeds-container">
+            <div style="font-size: 0.7rem; font-weight: 800; opacity: 0.5; margin-bottom: 15px;">MANAGE SAVED FEEDS</div>
+            <div id="news-tab-manage-list"></div>
+        </div>
+    </div>
+</main>
+
+<div id="settingsOverlay">
+    <div class="top-row" style="padding: 20px 0;">
+        <h2 style="margin:0">Control Center</h2>
+        <button class="icon-btn" onclick="toggleSettings(false)"><span class="material-symbols-rounded">close</span></button>
+    </div>
+
+    <div class="settings-section">
+        <h3 style="margin-top:0">Quick Add</h3>
+        <select id="type-sel" onchange="uiChange()" class="full-input">
+            <option value="bill">New Bill</option>
+            <option value="task">New Task</option>
+            <option value="rss">New RSS Feed</option>
+        </select>
+        <div id="standard-fields">
+            <input type="text" id="in-name" placeholder="Item Name" class="full-input">
+            <input type="number" id="in-amt" placeholder="Amount (₹)" class="full-input">
+            <input type="datetime-local" id="in-date" class="full-input">
+        </div>
+        <div id="rss-field" style="display:none;">
+            <input type="text" id="rss-name-input" class="full-input" placeholder="Feed Name">
+            <input type="url" id="rss-url-input" class="full-input" placeholder="https://...">
+        </div>
+        <button class="btn-p" onclick="saveEntry()">Save Entry</button>
+    </div>
+
+    <div class="settings-section">
+        <h3 style="margin-top:0">System Config</h3>
+        <div class="setting-item"><span>Light Aura Mode</span><label class="switch"><input type="checkbox" id="theme-toggle" onchange="updateSystem()"><span class="slider"></span></label></div>
+        <div class="setting-item"><span>Push Notifications</span><label class="switch"><input type="checkbox" id="notif-toggle" onchange="updateSystem()"><span class="slider"></span></label></div>
+        <div style="margin-top: 15px;">
+            <label style="font-size: 0.75rem; font-weight: 800; opacity: 0.6;">REPEAT ALERT TIMER</label>
+            <select id="notif-timer" class="full-input" onchange="updateSystem()">
+                <option value="0.25">15 Min</option><option value="0.5">30 Min</option><option value="1">60 Min</option>
+                <option value="2">2 Hrs</option><option value="4">4 Hrs</option><option value="8">8 Hrs</option>
+                <option value="24">Daily</option>
+            </select>
+        </div>
+        <button class="btn-outline" onclick="testNotification()">Test Notification Now</button>
+    </div>
+
+    <div class="settings-section">
+        <h3 style="margin-top:0">Data Management</h3>
+        <button class="btn-outline" onclick="exportData()"><span class="material-symbols-rounded" style="font-size:1rem; vertical-align:middle;">download</span> Export Backup</button>
+        <button class="btn-outline" onclick="document.getElementById('importFile').click()"><span class="material-symbols-rounded" style="font-size:1rem; vertical-align:middle;">upload</span> Restore Data</button>
+        <input type="file" id="importFile" style="display:none" onchange="restoreData(event)" accept=".json">
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('bills', this)"><span class="material-symbols-rounded">payments</span>Bills</div>
+    <div class="nav-item" onclick="switchTab('tasks', this)"><span class="material-symbols-rounded">checklist</span>Tasks</div>
+    <div class="nav-item" onclick="switchTab('news', this); fetchNews();"><span class="material-symbols-rounded">rss_feed</span>News</div>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
