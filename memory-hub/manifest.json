@@ -2,7 +2,7 @@
   "name": "Memory Hub",
   "short_name": "MemHub",
   "description": "A secure place to store and organize your digital memories.",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4A90E2",
