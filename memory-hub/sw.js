@@ -1,6 +1,5 @@
 const CACHE_NAME = 'memory-hub-v12'; // Incremented version
 
-// FIX: Use relative paths (no leading slash) so GitHub Pages finds them
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
