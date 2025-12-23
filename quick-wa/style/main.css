@@ -1,231 +1,187 @@
+/* Quick Chat - Full Professional CSS 
+   Theme: Deep Slate / WhatsApp Green
+*/
+
 :root {
-    --black-color: #000;
-    --white-color: #fff;
-    --backgound-color: #090e11;
-    --background-secondary-color: #131c21;
-    --background-paper-color: #131c21;
-    --top-header-color: #2a2f32;
-    --top-header-icon-color: #b1b3b5;
-    --primary-main-color: ;
-    --primary-light-color: ;
-    --primary-dark-color: #054740;
-    --primary-button-color: #262d31;
-    --primary-text-color: ;
-    --secondary-main-color: ;
-    --secondary-light-color: ;
-    --secondary-dark-color: #323739;
-    --secondary-text-color: ;
-    --error-main-color: ;
-    --error-main-color: ;
-    --error-main-color: ;
-    --error-main-color: ;
-    --danger: #ef697a;
-    --text-primary-color: #d4d5d7;
-    --text-secondary-color: rgba(241, 241, 242, 0.63);
-    --text-disable-color: ;
-    --hint-color: ;
-    --valid-color: #34B7F1;
-    --success-color: #00af9c;
+    --bg-color: #0b0e11;
+    --card-bg: #15191c;
+    --border-color: #2d3339;
+    --text-primary: #ffffff;
+    --text-secondary: #9ba1a6;
+    --accent-color: #25d366;
+    --accent-hover: #1da851;
+    --input-bg: #1f2428;
+    --error-color: #ff3b30;
+}
+
+/* 1. Base Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--backgound-color);
-}
-
-#MainSection {
-    max-width: 720px;
-    height: auto;
-    margin: auto;
-    background-color: var(--background-secondary-color);
-    padding-bottom: 100px;
-}
-
-
-/* TopBar styles Start */
-
-.topbar {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    background: var(--top-header-color);
-    width: 100%;
-}
-
-.title {
-    color: var(--text-primary-color);
-    text-align: right;
-    line-height: 0.5em;
-}
-
-.title h1 {
-    font-size: 3vw;
-}
-
-.title p {
-    font-size: 1vw;
-    letter-spacing: .2em;
-}
-
-.send {
-    padding: 10px 50px 10px 50px;
-}
-
-.send button {
-    width: 5vw;
-    height: 5vw;
-    font-size: 2vw;
-    margin: 3px;
-    border-radius: 10vw;
-    background: none;
-    color: var(--top-header-icon-color);
-    border: 2px solid var(--top-header-icon-color);
-}
-
-.send button .material-icons {
-    font-size: 3vw !important;
-    vertical-align: middle;
-}
-
-
-/* TopBar styles End */
-
-.display {
-    display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin: 25px;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-#dCode {
-    background-color: var(--background-paper-color);
-    color: var(--valid-color);
-    width: 150px;
-    height: auto;
-    text-align: center;
-    font-size: 3vw;
-    border-right: none !important;
-    border: 3px solid var(--valid-color);
-    border-radius: 10vw 0px 0px 10vw;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-left: 10px;
+/* 2. Layout Containers */
+.app-container {
+    width: 100%;
+    max-width: 400px;
 }
 
-input {
-    width: 400px;
-    height: auto;
-    background: var(--background-paper-color);
-    border: none;
-    text-align: center;
-    font-size: 3vw;
+.chat-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
-input.number:invalid {
-    border-left: none !important;
-    border: 3px solid var(--danger);
-    border-radius: 0px 10vw 10vw 0px;
-    color: var(--danger);
+/* 3. Typography */
+.brand h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
 }
 
-input.number:valid {
-    border-left: none !important;
-    border: 3px solid var(--valid-color);
-    border-radius: 0px 10vw 10vw 0px;
-    color: var(--white-color);
-}
-
-textarea {
-    background-color: var(--primary-dark-color);
-    color: var(--text-primary-color);
-    border-radius: 3vw 3vw 0vw 3vw;
-    border: none;
+.status-badge {
+    font-size: 11px;
+    color: var(--text-secondary);
     display: block;
-    margin-left: auto;
-    margin-right: 25px;
-    padding: 10px;
+    margin-bottom: 25px;
 }
 
-
-/* Type number section */
-
-table {
-    display: none;
-    margin-left: auto;
-    margin-right: auto;
+.form-group {
+    margin-bottom: 20px;
 }
 
-
-/*all number use this fonts*/
-
-#num {
-    font-family: 'Alata', sans-serif;
+.form-group label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
 }
 
-button {
-    width: 20vw;
-    height: 20vw;
-    font-size: 10vw;
-    margin: 5px;
+/* 4. THE FIX: Input Wrapper & Flex Logic */
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    height: 56px;
+    width: 100%;
+    overflow: hidden; /* Important for the divider and rounded corners */
+}
+
+/* This fixes the overlay: Lock the select width */
+.country-select {
+    flex: 0 0 90px; /* Fixed width: 90px */
+    width: 90px;    /* Force width */
+    height: 100%;
+    background: transparent;
     border: none;
-    border-radius: 100px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 10px;
+    outline: none;
     cursor: pointer;
-    background-color: var(--primary-button-color);
-    color: var(--text-primary-color);
+    appearance: none; /* Removes default browser arrow if desired */
 }
 
-
-/* more elements control */
-
-:focus {
-    outline-width: 0;
+.vertical-divider {
+    flex: 0 0 1px; /* Divider stays 1px */
+    height: 24px;
+    background: var(--border-color);
 }
 
-.material-icons {
-    font-size: 10vw !important;
-    vertical-align: middle;
+/* This allows the phone input to take all remaining space */
+.main-input {
+    flex: 1; 
+    min-width: 0; /* Critical fix for flex-item overflow */
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    padding: 0 15px;
+    font-size: 18px; /* Slightly larger for readability */
+    outline: none;
 }
 
-input,
-textarea,
-button,
-select,
-a {
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+.main-input::placeholder {
+    color: #4b535d;
 }
 
-@media only screen and (max-width: 600px) {
-    .send button {
-        width: 12vw;
-        height: 12vw;
-    }
-    .send button .material-icons {
-        font-size: 6vw !important;
-        vertical-align: middle;
-    }
-    .title h1 {
-        font-size: 6vw;
-    }
-    .title p {
-        font-size: 3vw;
-    }
-    #dCode {
-        width: 20vw;
-        height: auto;
-        font-size: 6vw;
-    }
-    input {
-        width: 60vw;
-        height: auto;
-        font-size: 6vw;
-    }
-    textarea {
-        width: 70vw;
-    }
-    table {
-        display: table;
+/* 5. Message Textarea */
+.main-textarea {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    color: var(--text-primary);
+    font-size: 15px;
+    outline: none;
+    resize: none;
+    min-height: 56px;
+    transition: border-color 0.2s;
+}
+
+.main-textarea:focus, .input-wrapper:focus-within {
+    border-color: var(--accent-color);
+}
+
+/* 6. Button Styles */
+.primary-btn {
+    width: 100%;
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+    height: 56px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.primary-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.primary-btn:active {
+    transform: scale(0.98);
+}
+
+/* 7. Footer */
+.card-footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* 8. Mobile Fixes */
+@media (max-width: 400px) {
+    .chat-card {
+        padding: 20px;
+        border: none;
+        background: transparent;
     }
 }

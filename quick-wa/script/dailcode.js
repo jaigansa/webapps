@@ -1214,19 +1214,44 @@ const dailcode = [{
 ;
 
 
-// get element ID
-
-
+// 2. The Insertion Function
 function dailcodeIns() {
-    taksel = document.getElementById("allcode");
-    for (i = 0; i < dailcode.length; i++) {
-        var newopt = document.createElement("option");
-        newname = dailcode[i].name.toUpperCase() + " " + "(" + dailcode[i].dial_code + ")";
-        newopt.appendChild(document.createTextNode(newname));
-        newopt.setAttribute("data-countryCode", dailcode[i].code);
-        newopt.value = dailcode[i].dial_code.slice(1);
-        taksel.appendChild(newopt);
+    const taksel = document.getElementById("allcode");
+    
+    // Check if the element exists to prevent errors
+    if (!taksel) {
+        console.error("Error: Element with ID 'allcode' not found.");
+        return;
     }
 
-};
-dailcodeIns();
+    // Clear existing options (except the default/recents)
+    taksel.innerHTML = "";
+
+    // Use a DocumentFragment for better performance
+    const fragment = document.createDocumentFragment();
+
+    dailcode.forEach(item => {
+        const newopt = document.createElement("option");
+        
+        // Formatted Name: AFGHANISTAN (+93)
+        const newname = `${item.name.toUpperCase()} (${item.dial_code})`;
+        
+        newopt.textContent = newname;
+        newopt.setAttribute("data-countryCode", item.code);
+        
+        // We slice(1) to remove the '+' so the value is just the number
+        newopt.value = item.dial_code.replace('+', ''); 
+        
+        fragment.appendChild(newopt);
+    });
+
+    taksel.appendChild(fragment);
+    console.log("Success: All country codes loaded.");
+}
+
+// 3. CRITICAL: Wait for the HTML to be ready
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", dailcodeIns);
+} else {
+    dailcodeIns(); // DOM already loaded
+}
