@@ -1,59 +1,71 @@
-const CACHE_NAME = 'memory-hub-v1';
+const CACHE_NAME = 'memory-hub-v12'; // Incremented version
+
+// FIX: Use relative paths (no leading slash) so GitHub Pages finds them
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/app.js',
-  '/styles.css',
-  '/manifest.json',
-  '/images/icon-192.png'
+  './',
+  'index.html',
+  'app.js',
+  'styles.css',
+  'manifest.json'
 ];
 
-// 1. Install Event: Storing the "Shell" of your Memory Hub
+// 1. Install Event
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('Memory Hub: Caching Shell Assets');
-      return cache.addAll(ASSETS_TO_CACHE);
+      // We use map to catch individual file errors so one missing file doesn't break the whole SW
+      return Promise.all(
+        ASSETS_TO_CACHE.map(url => {
+          return cache.add(url).catch(err => console.warn(`Could not cache: ${url}`, err));
+        })
+      );
     })
   );
-  // Forces the waiting service worker to become the active service worker
   self.skipWaiting();
 });
 
-// 2. Activate Event: Cleaning up old versions of the Memory Hub
+// 2. Activate Event
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('Memory Hub: Clearing Old Cache');
             return caches.delete(cache);
           }
         })
       );
     })
   );
+  // Take control of all pages immediately
+  return self.clients.claim();
 });
 
-// 3. Fetch Event: Serving content
+// 3. Fetch Event
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      // Return cached file OR fetch from network
-      return response || fetch(event.request).catch(() => {
-        // Optional: Return a custom offline page if both fail
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-      });
+      return response || fetch(event.request);
     })
   );
 });
 
+// 4. Notification Click
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
     event.waitUntil(
-        clients.openWindow('/') // Opens your app when they tap the notification
+        clients.matchAll({type: 'window'}).then(windowClients => {
+            // If app is already open, focus it. Otherwise, open new.
+            for (var i = 0; i < windowClients.length; i++) {
+                var client = windowClients[i];
+                if (client.url === '/' && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow('./');
+            }
+        })
     );
 });

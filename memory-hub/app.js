@@ -65,20 +65,25 @@ function updateSystem() {
 }
 
 function testNotification() {
-    if (Notification.permission === "granted") {
-        // Use the Service Worker registration for Android compatibility
-        navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification("Memory Hub", {
-                body: "Test Successful! Alerts are active on mobile.",
-                icon: "/images/icon-192.png", // Make sure this path is correct
-                vibrate: [200, 100, 200],
-                badge: "/images/icon-192.png"
-            });
-        });
-    } else {
-        alert("Enable Notifications first!");
-        Notification.requestPermission();
+    if (!("Notification" in window)) {
+        alert("This browser does not support notifications.");
+        return;
     }
+
+    Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+            // This is the specific way to make it work on Android
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification("Memory Hub", {
+                    body: "Alerts are now active!",
+                    vibrate: [200, 100, 200],
+                    tag: 'test-notification' // Prevents duplicate popups
+                });
+            });
+        } else {
+            alert("Please allow notifications in site settings.");
+        }
+    });
 }
 
 function saveEntry() {
@@ -196,7 +201,7 @@ window.onload = () => {
 };
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('sw.js')
             .then((registration) => {
                 console.log('Service Worker registered with scope:', registration.scope);
             })
