@@ -50,3 +50,10 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow('/') // Opens your app when they tap the notification
+    );
+});

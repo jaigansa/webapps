@@ -66,8 +66,19 @@ function updateSystem() {
 
 function testNotification() {
     if (Notification.permission === "granted") {
-        new Notification("Memory Hub", { body: "Test Successful! Alerts are active." });
-    } else { alert("Enable Notifications first!"); Notification.requestPermission(); }
+        // Use the Service Worker registration for Android compatibility
+        navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification("Memory Hub", {
+                body: "Test Successful! Alerts are active on mobile.",
+                icon: "/images/icon-192.png", // Make sure this path is correct
+                vibrate: [200, 100, 200],
+                badge: "/images/icon-192.png"
+            });
+        });
+    } else {
+        alert("Enable Notifications first!");
+        Notification.requestPermission();
+    }
 }
 
 function saveEntry() {
@@ -93,11 +104,21 @@ function checkAlarms() {
     if (!db.settings.notifs || Notification.permission !== "granted") return;
     const now = Date.now();
     const intervalMs = parseFloat(db.settings.timer) * 60 * 60 * 1000;
+
     [...db.bills, ...db.tasks].forEach(item => {
         const dueTime = new Date(item.date).getTime();
         if (!item.paid && dueTime <= now) {
             if (!item.lastNotified || (now - item.lastNotified) >= intervalMs) {
-                new Notification("Memory Hub Alert", { body: `${item.name} is due!` });
+                
+                // Android compatible notification
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification("Memory Hub Alert", {
+                        body: `${item.name} is due!`,
+                        vibrate: [200, 100, 200],
+                        data: { url: window.location.href } 
+                    });
+                });
+
                 item.lastNotified = now;
                 localStorage.setItem('mh_v10_db', JSON.stringify(db));
             }
