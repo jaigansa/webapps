@@ -1,131 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gap Finder | Sri Jaiganesh Industry</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-</head>
-<body class="text-slate-100 p-2 md:p-6">
-    <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <div class="lg:col-span-4 space-y-4">
-            
-            <div class="flex gap-2">
-                <select id="unitSelect" class="flex-1 bg-blue-600 text-white font-bold p-3 rounded-xl shadow-lg outline-none">
-                    <option value="mm">MILLIMETERS (mm)</option>
-                    <option value="in">INCHES (in)</option>
-                </select>
-                <button id="resetBtn" class="bg-slate-800 text-slate-400 px-5 rounded-xl font-bold hover:bg-rose-600 hover:text-white transition-all">RESET</button>
-            </div>
 
-<div class="neo-card p-5 border-l-4 border-l-blue-500">
-    <span class="label-header text-blue-400">01. Frame Container</span>
-    <div class="space-y-4 mt-4">
-        <div>
-            <label class="label-header">Inside Width</label>
-            <div class="input-wrapper">
-                <div class="side-btn" onclick="step('totalWidth', -10)">-</div>
-                <input id="totalWidth" type="number" value="1200" class="num-input">
-                <div class="side-btn" onclick="step('totalWidth', 10)">+</div>
-            </div>
-        </div>
-        <div>
-            <label class="label-header">Inside Height</label>
-            <div class="input-wrapper">
-                <div class="side-btn" onclick="step('totalHeight', -10)">-</div>
-                <input id="totalHeight" type="number" value="800" class="num-input">
-                <div class="side-btn" onclick="step('totalHeight', 10)">+</div>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gap Finder Pro | Sri Jaiganesh Industry</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body class="p-2 md:p-6">
+  <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <div class="lg:col-span-4 space-y-4 no-print">
+      <div class="flex gap-2">
+        <select id="unitSelect" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 rounded-xl shadow-lg cursor-pointer outline-none transition-all">
+          <option value="in">INCHES (in)</option>
+          <option value="mm">MILLIMETERS (mm)</option>
+          <option value="cm">CENTIMETERS (cm)</option>
+        </select>
+        <button id="resetBtn" class="bg-slate-800 text-slate-300 px-5 rounded-xl font-bold hover:bg-rose-600 hover:text-white transition-all">RESET</button>
+      </div>
+
+      <div class="neo-card p-5 border-l-4 border-l-blue-500">
+        <span class="label-header text-blue-400">01. Frame Dimensions</span>
+        <div class="space-y-4 mt-4">
+          <div>
+            <label class="label-header">Inside Width (L)</label>
+            <div class="input-wrapper mt-1"><input id="totalWidth" type="text" value="48" class="num-input p-3"></div>
+          </div>
+          <div>
+            <label class="label-header">Inside Height (H)</label>
+            <div class="input-wrapper mt-1"><input id="totalHeight" type="text" value="36" class="num-input p-3"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="label-header">Frame Face (W)</label>
-                <div class="input-wrapper">
-                    <div class="side-btn" onclick="step('fFace', -5)">-</div>
-                    <input id="fFace" type="number" value="40" class="num-input">
-                    <div class="side-btn" onclick="step('fFace', 5)">+</div>
-                </div>
+              <label class="label-header">Frame Face</label>
+              <div class="input-wrapper mt-1"><input id="fFace" type="text" value="1 1/2" class="num-input p-2 text-sm"></div>
             </div>
             <div>
-                <label class="label-header">Frame Depth (T)</label>
-                <div class="input-wrapper">
-                    <div class="side-btn" onclick="step('fDepth', -5)">-</div>
-                    <input id="fDepth" type="number" value="40" class="num-input">
-                    <div class="side-btn" onclick="step('fDepth', 5)">+</div>
-                </div>
+              <label class="label-header">Frame Depth</label>
+              <div class="input-wrapper mt-1"><input id="fDepth" type="text" value="1 1/2" class="num-input p-2 text-sm"></div>
             </div>
+          </div>
         </div>
+      </div>
+
+      <div class="neo-card p-5 border-l-4 border-l-emerald-500">
+        <span class="label-header text-emerald-400">02. Rod Details</span>
+        <div class="space-y-4 mt-4">
+          <div>
+            <label class="label-header">Number of Rods</label>
+            <div class="input-wrapper mt-1 ring-1 ring-emerald-500/30">
+              <input id="barCount" type="number" value="7" class="num-input text-emerald-400 p-3">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="label-header">Rod Face</label>
+              <div class="input-wrapper mt-1"><input id="barFace" type="text" value="3/4" class="num-input p-2 text-sm"></div>
+            </div>
+            <div>
+              <label class="label-header">Rod Depth</label>
+              <div class="input-wrapper mt-1"><input id="barDepth" type="text" value="3/4" class="num-input p-2 text-sm"></div>
+            </div>
+          </div>
+          <div class="space-y-3 pt-4 border-t border-slate-800">
+            <div class="flex justify-between items-center">
+              <label class="label-header">Z-Offset (Position)</label>
+              <span id="offsetDisp" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded">0 mm</span>
+            </div>
+            <input id="zOffset" type="range" min="-50" max="50" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-8 space-y-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+        <div class="neo-card p-4 border-b-2 border-b-blue-500">
+          <p class="label-header">Clearance Gap</p>
+          <div id="gapRes" class="text-xl font-black text-blue-400 mt-1">--</div>
+        </div>
+        <div class="neo-card p-4 border-b-2 border-b-emerald-500">
+          <p class="label-header">Spacer Jig</p>
+          <div id="spacerRes" class="text-xl font-black text-emerald-400 mt-1">--</div>
+        </div>
+        <div class="neo-card p-4">
+          <p class="label-header">Diagonal</p>
+          <div id="diagRes" class="text-xl font-black text-rose-400 mt-1">--</div>
+        </div>
+        <div class="neo-card p-4 border-b-2 border-b-amber-500">
+          <p class="label-header">Total Material</p>
+          <div id="totalLenRes" class="text-xl font-black text-amber-500 mt-1">--</div>
+        </div>
+      </div>
+
+      <div class="flex gap-3 no-print">
+        <button id="copyBtn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold py-4 rounded-xl border border-slate-700 transition-all flex items-center justify-center gap-2">
+        COPY
+        </button>
+        <button id="printBtn" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+         PRINT
+        </button>
+      </div>
+
+    <div id="three-container" class="w-full h-[450px] bg-slate-950 rounded-2xl border border-slate-800 shadow-inner relative overflow-hidden no-print">
+    <div class="absolute top-3 right-3 bg-slate-900/40 backdrop-blur-sm px-2 py-1 rounded border border-slate-800/50 text-[9px] font-bold text-slate-500 uppercase tracking-tighter pointer-events-none">
+        3D Preview
+    </div>
+
+    <div class="absolute bottom-3 left-3 z-50 flex gap-1.5 flex-wrap">
+        <button id="spinBtn" class="px-3 py-1.5 bg-slate-900/80 hover:bg-slate-800 backdrop-blur-md text-slate-300 text-[10px] font-bold rounded-lg border border-slate-700/50 transition-all flex items-center gap-1.5">
+             SPIN
+        </button>
+        <button id="centerBtn" class="px-3 py-1.5 bg-slate-900/80 hover:bg-slate-800 backdrop-blur-md text-slate-300 text-[10px] font-bold rounded-lg border border-slate-700/50 transition-all flex items-center gap-1.5">
+             FOCUS
+        </button>
+        <button id="fullBtn" class="px-3 py-1.5 bg-slate-900/80 hover:bg-slate-800 backdrop-blur-md text-slate-300 text-[10px] font-bold rounded-lg border border-slate-700/50 transition-all flex items-center gap-1.5">
+             FULL
+        </button>
     </div>
 </div>
 
-            <div class="neo-card p-5 border-l-4 border-l-emerald-500">
-                <span class="label-header text-emerald-400">02. Rod Container</span>
-                <div class="space-y-4 mt-4">
-                    <label class="label-header">Rod Count</label>
-                    <div class="input-wrapper">
-                        <div class="side-btn" onclick="step('barCount', -1)">-</div>
-                        <input id="barCount" type="number" value="7" class="num-input">
-                        <div class="side-btn" onclick="step('barCount', 1)">+</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="label-header">Rod Face (W)</label>
-                            <div class="input-wrapper">
-                                <div class="side-btn" onclick="step('barFace', -2)">-</div>
-                                <input id="barFace" type="number" value="20" class="num-input">
-                                <div class="side-btn" onclick="step('barFace', 2)">+</div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="label-header">Rod Depth (T)</label>
-                            <div class="input-wrapper">
-                                <div class="side-btn" onclick="step('barDepth', -2)">-</div>
-                                <input id="barDepth" type="number" value="20" class="num-input">
-                                <div class="side-btn" onclick="step('barDepth', 2)">+</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="neo-card p-5 border-l-4 border-l-rose-500">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="label-header text-rose-500">03. Offset Container</span>
-                    <span id="offsetVal" class="font-mono text-sm font-bold text-rose-500">0mm</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <input id="zOffset" type="range" min="-100" max="100" value="0" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none">
-                </div>
-            </div>
-
-            <button id="whatsappBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 transition-transform active:scale-95">
-                SEND WhatsApp
-            </button>
-        </div>
-
-        <div class="lg:col-span-8 space-y-4">
-            
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-center">
-                <div class="neo-card p-4"><p class="label-header">Clearance Gap</p><div id="gapRes" class="text-2xl font-black text-blue-400">--</div></div>
-                <div class="neo-card p-4"><p class="label-header">Spacer Jig</p><div id="spacerRes" class="text-2xl font-black text-emerald-400">--</div></div>
-                <div class="neo-card p-4"><p class="label-header">Diagonal Check</p><div id="diagRes" class="text-2xl font-black text-white">--</div></div>
-            </div>
-
-            <div class="neo-card overflow-hidden">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-800/80 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                        <tr><th class="p-4">Rod</th><th class="p-4 text-emerald-400">Start (A)</th><th class="p-4 text-blue-400">Center</th><th class="p-4 text-rose-500">End (B)</th></tr>
-                    </thead>
-                    <tbody id="markTable" class="divide-y divide-slate-800 font-mono text-sm text-slate-200"></tbody>
-                </table>
-            </div>
-        </div>
-        <div id="three-container" class="w-full h-[450px] bg-slate-950 rounded-2xl border border-slate-800 shadow-inner relative"></div>
-            
+      <div class="neo-card overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-800/50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              <th class="p-4">Rod #</th>
+              <th class="p-4">Start (A)</th>
+              <th class="p-4 text-blue-400">Center (Mark)</th>
+              <th class="p-4">End (B)</th>
+            </tr>
+          </thead>
+          <tbody id="markTable" class="divide-y divide-slate-800 font-mono text-sm">
+          </tbody>
+        </table>
+      </div>
     </div>
-    <script src="script.js"></script>
+  </div>
+  <script src="script.js"></script>
 </body>
+
 </html>

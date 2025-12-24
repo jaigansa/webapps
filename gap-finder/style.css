@@ -1,61 +1,185 @@
-body { background-color: #020408; font-family: sans-serif; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
-.neo-card { 
-    background: #0f172a; 
-    border: 1px solid #1e293b; 
-    border-radius: 16px; 
+:root { 
+    --bg: #020617; 
+    --card: #0f172a; 
+    --border: #1e293b; 
+    --accent: #3b82f6; 
+    --success: #10b981; 
 }
 
+body { 
+    background: var(--bg); 
+    font-family: 'Inter', sans-serif; 
+    color: #f1f5f9; 
+}
+
+/* Industrial Neo-Card */
+.neo-card { 
+    background: var(--card); 
+    border: 1px solid var(--border); 
+    border-radius: 16px; 
+    transition: all 0.3s ease; 
+}
+
+/* Precision Inputs */
 .input-wrapper { 
     display: flex; 
     align-items: center; 
-    background: #020617; 
-    border: 2px solid #334155; 
-    border-radius: 12px; 
-    overflow: hidden; 
+    background: #000; 
+    border-radius: 10px; 
+    border: 1px solid var(--border); 
 }
-
-.input-wrapper:focus-within { 
-    border-color: #3b82f6; 
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); 
-}
-
-.side-btn { 
-    background: #1e293b; 
-    color: #94a3b8; 
-    width: 48px; 
-    height: 48px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 20px; 
-    cursor: pointer; 
-    user-select: none; 
-}
-
-.side-btn:hover { background: #334155; color: white; }
 
 .num-input { 
     background: transparent; 
     border: none; 
     color: white; 
     text-align: center; 
-    font-family: monospace; 
     font-weight: 700; 
     width: 100%; 
     outline: none; 
-}
-
-input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { 
-    -webkit-appearance: none; 
+    font-size: 1.1rem; 
+    font-family: 'JetBrains Mono', monospace; 
 }
 
 .label-header { 
     font-size: 10px; 
     font-weight: 800; 
-    color: #64748b; 
     text-transform: uppercase; 
-    letter-spacing: 1px; 
+    letter-spacing: 1.5px; 
+    color: #64748b; 
 }
 
-input[type=range] { accent-color: #f43f5e; }
+/* Range Slider Styling */
+input[type="range"] {
+    appearance: none;
+    height: 6px;
+    background: #1e293b;
+    border-radius: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--success);
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+/* --- COMPLETE PROFESSIONAL PRINT ENGINE --- */
+@media print {
+    /* 1. Reset Global Styles for Paper */
+    html, body {
+        background: white !important;
+        color: black !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        font-family: 'Inter', -apple-system, sans-serif !important;
+        font-size: 11pt !important;
+    }
+
+    /* 2. Hide Non-Essential UI Elements */
+    .no-print, #three-container, .three-controls, 
+    button, select, input[type="range"], 
+    .lg\:col-span-4, .flex, #resetBtn {
+        display: none !important;
+    }
+
+    /* 3. Page Header Branding */
+    body::before {
+        content: "FABRICATION JOB SHEET"; 
+        display: block;
+        text-align: center;
+        font-size: 18pt;
+        font-weight: 800;
+        margin-bottom: 20px;
+        padding-top: 20px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+
+    /* 4. Results Summary Row (Centered Boxes) */
+    #summary-tiles {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 15px !important;
+        margin: 20px 0 !important;
+        width: 100% !important;
+    }
+
+    .neo-card {
+        background: white !important;
+        border: 2px solid #e2e8f0 !important;
+        box-shadow: none !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
+        text-align: center !important;
+    }
+
+    /* 5. The Table - Simple with Rounded Corners */
+    .neo-card.overflow-hidden {
+        border: 2px solid #000 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        margin-top: 30px !important;
+        display: block !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: none !important;
+    }
+
+    thead {
+        background: #f1f5f9 !important;
+        display: table-header-group; /* Repeats header on next page if long */
+    }
+
+    th {
+        color: #000 !important;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+        font-size: 10pt !important;
+        padding: 12px !important;
+        border-bottom: 2px solid #000 !important;
+        text-align: center !important;
+    }
+
+    td {
+        padding: 10px !important;
+        border-bottom: 1px solid #ddd !important;
+        color: #000 !important;
+        text-align: center !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 11pt !important;
+    }
+
+    /* 6. High-Visibility Marker Column (Center Mark) */
+    td:nth-child(3) {
+        background-color: #f1f5f9 !important;
+        font-weight: 800 !important;
+        font-size: 12pt !important;
+        border-left: 1px solid #ddd !important;
+        border-right: 1px solid #ddd !important;
+    }
+
+    /* 7. Footer */
+    body::after {
+        content: "Generated by Gap Finder | Sri Jaiganesh Industry"; 
+        display: block;
+        text-align: right;
+        font-size: 8pt;
+        color: #777;
+        margin-top: 30px;
+        padding-right: 20px;
+    }
+
+    /* Prevent breaking a row across two pages */
+    tr {
+        page-break-inside: avoid;
+    }
+}
