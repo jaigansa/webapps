@@ -5,12 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Truck Body Material List</title>
     <link rel="stylesheet" href="style.css"> 
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1f3a68">
 </head>
 <body>
     <div class="container">
         <div class="header-top no-print">
             <img src="logo.png" alt="Logo" class="logo">
-            <h1 class="no-print">Material List</h1>
+            <h1 class="no-print" style="margin:0;">Material List</h1>
+        </div>
+        
+        <!-- Summary Dashboard -->
+        <div id="summary-dashboard" class="no-print">
+            <div class="summary-card">
+                <h3>Total Weight</h3>
+                <div id="total-weight-val">0.00 kg</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Items</h3>
+                <div id="total-items-val">0</div>
+            </div>
+            <div class="summary-card">
+                 <h3>Est. Cost (₹)</h3>
+                 <div id="total-cost-val">0.00</div>
+            </div>
         </div>
 
         <div id="print-title">
@@ -19,39 +37,46 @@
         </div>
 
         <div id="input-area" class="no-print">
-            <div class="input-group">
-                <label>Material</label>
-                <select id="item-material">
-                    <option value="Mild_Steel" selected>MS</option>
-                    <option value="Stainless_304">SS</option>
-                    <option value="Aluminum_6061">AL</option>
-                </select>
+            <div class="input-row">
+                 <div class="input-group">
+                    <label>Material</label>
+                    <select id="item-material">
+                        <option value="Mild_Steel" selected>MS</option>
+                        <option value="Stainless_304">SS</option>
+                        <option value="Aluminum_6061">AL</option>
+                    </select>
+                </div>
+                
+                <div class="input-group" style="position: relative;">
+                    <label>Shape</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div id="shape-icon" style="width: 40px; height: 40px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                             <!-- Icon injected here -->
+                        </div>
+                        <select id="item-shape" style="flex-grow: 1;">
+                            <option value="angle" selected>Angle</option>
+                            <option value="flat">Flat</option>
+                            <option value="rod_round">RoundRod</option>
+                            <option value="rod_square">SquareRod</option>
+                            <option value="tube">Tube</option>
+                            <option value="pipe">Pipe</option>
+                            <option value="channel">Channel</option>
+                            <option value="beam">Beam</option>
+                            <option value="sheet">Sheet</option>
+                            <option value="plate">Plate</option>
+                            <option value="consumables">Consumables</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Shape</label>
-                <select id="item-shape">
-                    <option value="angle" selected>Angle</option>
-                    <option value="flat">Flat</option>
-                    <option value="rod_round">RoundRod</option>
-                    <option value="rod_square">SquareRod</option>
-                    <option value="tube">Tube</option>
-                    <option value="pipe">Pipe</option>
-                    <option value="channel">Channel</option>
-                    <option value="beam">Beam</option>
-                    <option value="sheet">Sheet</option>
-                    <option value="plate">Plate</option>
-                    <option value="consumables">Consumables</option>
-                    <option value="custom">Custom</option>
-                </select>
-            </div>
-
-            <div class="input-group" style="flex-grow: 1;">
+            <div class="input-group" style="width: 100%;">
                 <label>Size / Specification</label>
-                <select id="item-size"></select>
+                <select id="item-size" style="width: 100%;"></select>
             </div>
 
-            <div id="custom-input-group">
+            <div id="custom-input-group" style="width: 100%;">
                 <div class="input-group" style="flex-grow: 1;">
                     <label>Custom Description</label>
                     <input type="text" id="custom-description" placeholder="e.g., Grinding Wheel, Welding Rods">
@@ -71,29 +96,43 @@
                 </div>
 
             </div>
+            
+            <div class="input-row">
+                <div class="input-group" id="length-group">
+                    <label>Length (m)</label>
+                    <input type="number" id="item-length" value="6" min="0" step="0.1">
+                </div>
 
-            <div class="input-group" id="length-group">
-                <label>Length (m)</label>
-                <input type="number" id="item-length" value="6" min="0" step="0.1">
-            </div>
-
-            <div class="input-group">
-                <label>Qty (Nos)</label>
-                <input type="number" id="item-quantity" value="1" min="1">
+                <div class="input-group">
+                    <label>Qty (Nos)</label>
+                    <input type="number" id="item-quantity" value="1" min="1">
+                </div>
+                 <div class="input-group">
+                    <label>Price/Unit (₹)</label>
+                    <input type="number" id="item-price" value="0" min="0" step="1">
+                </div>
             </div>
 
             <div id="weight-display">Approx. 0.00 kg</div> 
-            <button id="add-button">Add</button>
+            <button id="add-button">Add Item</button>
+        </div>
+        
+        <!-- Action Toolbar -->
+        <div class="toolbar no-print">
+            <button id="save-btn" class="secondary-btn">Save List</button>
+            <button id="load-btn" class="secondary-btn">Load List</button>
+             <button id="clear-btn" class="secondary-btn" style="background-color: #d32f2f;">Clear All</button>
+             <button id="whatsapp-btn" class="secondary-btn" style="background-color: #2e7d32;">Share WhatsApp</button>
         </div>
 
         <div class="list-header">
             <span>Description</span>
             <span style="text-align: right; margin-right: 15px;">Approx.</span>
             <span style="text-align: center;">Qty</span>
-            <span class="no-print">Action</span>
+            <span class="no-print"></span>
         </div>
         <ul id="material-list"></ul>
-        <button id="print-button" class="no-print" onclick="window.print()">🖨️ Print List (A5 PDF)</button>
+        <button id="print-button" class="no-print" onclick="window.print()">Print Material List</button>
     <div id="print-footer">
             <div class="footer-info">
                 For contact more information, scan this QR code:
@@ -102,7 +141,40 @@
         </div>
 
     </div>
+
+    <!-- Load Project Modal -->
+    <div id="load-modal" class="modal no-print">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Saved Projects</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <ul id="saved-projects-list">
+                <!-- Projects injected here -->
+            </ul>
+            <div class="modal-footer">
+                <button id="close-modal-btn" class="secondary-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="alert-modal" class="modal no-print" style="z-index: 2000;">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 30px;">
+            <div style="margin-bottom: 20px;">
+                <h3 id="alert-title" style="color: var(--primary-color); margin: 0 0 10px 0;">Notice</h3>
+                <p id="alert-message" style="color: #555; font-size: 1.1em; margin: 0;">Message goes here</p>
+            </div>
+            <button id="alert-ok-btn" class="primary-btn" style="background-color: var(--primary-color); color: white; width: 100px;">OK</button>
+        </div>
+    </div>
+
 <script src="material-data.js"></script>
     <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
 </body>
 </html>

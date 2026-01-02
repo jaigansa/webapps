@@ -1,0 +1,21 @@
+{
+  "name": "Material List Calculator",
+  "short_name": "MatList",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f3a68",
+  "description": "Calculate weights and costs for truck body materials.",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
