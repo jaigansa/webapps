@@ -15,6 +15,7 @@ const qtyInput = document.getElementById('item-quantity');
 const priceInput = document.getElementById('item-price');
 const priceTypeInput = document.getElementById('price-type');
 const wtDisplay = document.getElementById('weight-display');
+const costDisplay = document.getElementById('cost-display'); // New
 const shapeInput = document.getElementById('item-shape');
 const shapeIconContainer = document.getElementById('shape-icon');
 const addButton = document.getElementById('add-button');
@@ -297,6 +298,28 @@ function calculateTotalWeight() {
     }
     
     wtDisplay.textContent = `Approx. ${displayWtText}`;
+    
+    // --- Cost Display Logic ---
+    const price = parseFloat(priceInput.value) || 0;
+    const priceType = priceTypeInput.value;
+    let currentCost = 0;
+
+    if (price > 0) {
+        if (priceType === 'nos') {
+            currentCost = price * qty;
+        } else if (priceType === 'kg') {
+            const numericWt = parseFloat(totalWt) || 0;
+            currentCost = price * numericWt;
+        }
+    }
+
+    if (currentCost > 0) {
+        costDisplay.textContent = `₹${currentCost.toFixed(2)}`;
+        costDisplay.style.display = 'flex';
+    } else {
+        costDisplay.style.display = 'none';
+    }
+    // --------------------------
     
     return { weight: totalWt.toFixed(2), unit: unit, rawVal: customWeightInput.value, rawUnit: customUnitInput.value };
 }
@@ -933,6 +956,8 @@ matInput.addEventListener('change', calculateTotalWeight);
 sizeInput.addEventListener('change', calculateTotalWeight);
 lenInput.addEventListener('input', calculateTotalWeight);
 qtyInput.addEventListener('input', calculateTotalWeight);
+priceInput.addEventListener('input', calculateTotalWeight); // New
+priceTypeInput.addEventListener('change', calculateTotalWeight); // New
 customDescriptionInput.addEventListener('input', calculateTotalWeight);
 customWeightInput.addEventListener('input', calculateTotalWeight);
 customUnitInput.addEventListener('change', calculateTotalWeight);
