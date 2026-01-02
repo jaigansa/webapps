@@ -6,13 +6,16 @@
     <title>Truck Body Material List</title>
     <link rel="stylesheet" href="style.css"> 
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1f3a68">
+    <meta name="theme-color" content="#4F46E5">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <div class="header-top no-print">
             <img src="logo.png" alt="Logo" class="logo">
-            <h1 class="no-print" style="margin:0;">Material List</h1>
+            <h1 class="no-print">Material List</h1>
         </div>
         
         <!-- Summary Dashboard -->
@@ -33,7 +36,7 @@
 
         <div id="print-title">
             <img src="logo.png" alt="Workshop Logo" class="logo-print">
-        <h2>SRI JAIGANESH INDUSTRY</h2>
+            <h2>SRI JAIGANESH INDUSTRY</h2>
         </div>
 
         <div id="input-area" class="no-print">
@@ -50,7 +53,7 @@
                 <div class="input-group" style="position: relative;">
                     <label>Shape</label>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <div id="shape-icon" style="width: 40px; height: 40px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                        <div id="shape-icon">
                              <!-- Icon injected here -->
                         </div>
                         <select id="item-shape" style="flex-grow: 1;">
@@ -66,32 +69,64 @@
                             <option value="plate">Plate</option>
                             <option value="consumables">Consumables</option>
                             <option value="custom">Custom</option>
+                            <option value="parts">Parts</option>
+                            <option value="transport">Transport Charge</option>
+                            <option value="service">Service Charge</option>
+                            <option value="others">Others</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <div class="input-group" style="width: 100%;">
+            <div class="input-group" style="width: 100%; margin-bottom: 16px;">
                 <label>Size / Specification</label>
-                <select id="item-size" style="width: 100%;"></select>
+                <select id="item-size"></select>
             </div>
 
             <div id="custom-input-group" style="width: 100%;">
                 <div class="input-group" style="flex-grow: 1;">
-                    <label>Custom Description</label>
+                    <label id="custom-desc-label">Custom Description</label>
                     <input type="text" id="custom-description" placeholder="e.g., Grinding Wheel, Welding Rods">
                 </div>
+                
+                <!-- Transport Specific Inputs -->
+                <div id="transport-extras" style="display:none; width: 100%; gap: 16px; margin-top: 5px;">
+                    <div class="input-group" style="flex: 1;">
+                        <label>From Place</label>
+                        <input type="text" id="trans-from" placeholder="Start">
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>To Place</label>
+                        <input type="text" id="trans-to" placeholder="End">
+                    </div>
+                </div>
+
                 <div class="input-group">
-                    <label>Weight</label>
-                    <input type="number" id="custom-weight" value="1" min="0" step="0.1">
+                    <label id="weight-val-label">Wt / Val</label>
+                    <input type="number" id="custom-weight" value="1" min="0" step="any" inputmode="decimal">
                 </div>
                 <div class="input-group">
                     <label>Unit</label>
                     <select id="custom-unit">
                         <option value="kg" selected>kg</option>
-                        <option value="liters">liters</option>
+                        <option value="gm">gm</option>
+                        <option value="ton">ton</option>
+                        <option value="mm">mm</option>
+                        <option value="inch">inch</option>
                         <option value="ft">ft</option>
+                        <option value="sq.ft">sq.ft</option>
+                        <option value="sq.m">sq.m</option>
+                        <option value="cu.m">cu.m</option>
+                        <option value="liters">liters</option>
+                        <option value="ml">ml</option>
                         <option value="nos">nos</option>
+                        <option value="set">set</option>
+                        <option value="roll">roll</option>
+                        <option value="pkt">pkt</option>
+                        <option value="box">box</option>
+                        <option value="lot">lot</option>
+                        <option value="trip">trip</option>
+                        <option value="service">service</option>
                     </select>
                 </div>
 
@@ -100,39 +135,125 @@
             <div class="input-row">
                 <div class="input-group" id="length-group">
                     <label>Length (m)</label>
-                    <input type="number" id="item-length" value="6" min="0" step="0.1">
+                    <input type="number" id="item-length" value="6" min="0" step="any" inputmode="decimal">
                 </div>
 
                 <div class="input-group">
-                    <label>Qty (Nos)</label>
-                    <input type="number" id="item-quantity" value="1" min="1">
+                    <label id="qty-label">Qty (Nos)</label>
+                    <input type="number" id="item-quantity" value="1" min="1" inputmode="numeric">
                 </div>
                  <div class="input-group">
-                    <label>Price/Unit (₹)</label>
-                    <input type="number" id="item-price" value="0" min="0" step="1">
+                    <label id="price-label">Price (₹)</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="number" id="item-price" value="0" min="0" step="any" style="flex: 1;" inputmode="decimal">
+                        <select id="price-type" style="width: 90px;">
+                            <option value="nos">/No</option>
+                            <option value="kg">/Kg</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             <div id="weight-display">Approx. 0.00 kg</div> 
-            <button id="add-button">Add Item</button>
+            <button id="add-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Add Item
+            </button>
         </div>
         
         <!-- Action Toolbar -->
         <div class="toolbar no-print">
-            <button id="save-btn" class="secondary-btn">Save List</button>
-            <button id="load-btn" class="secondary-btn">Load List</button>
-             <button id="clear-btn" class="secondary-btn" style="background-color: #d32f2f;">Clear All</button>
-             <button id="whatsapp-btn" class="secondary-btn" style="background-color: #2e7d32;">Share WhatsApp</button>
+            <div class="toolbar-group">
+                <button id="save-btn" class="secondary-btn">Save</button>
+                <button id="load-btn" class="secondary-btn">Load</button>
+                <button id="clear-btn" class="secondary-btn">Clear</button>
+            </div>
+            <div class="toolbar-group">
+                <button id="print-settings-btn" class="secondary-btn icon-btn" title="Print & Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                </button>
+                <button id="whatsapp-btn" class="secondary-btn icon-btn" title="Share WhatsApp">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                </button>
+            </div>
         </div>
 
         <div class="list-header">
+            <span>Shape</span>
             <span>Description</span>
-            <span style="text-align: right; margin-right: 15px;">Approx.</span>
+            <span style="text-align: right;">Weight / Val</span>
             <span style="text-align: center;">Qty</span>
-            <span class="no-print"></span>
+            <span></span> <!-- Delete col -->
         </div>
         <ul id="material-list"></ul>
-        <button id="print-button" class="no-print" onclick="window.print()">Print Material List</button>
+        
+        <!-- Print-only Summary -->
+        <div id="print-summary" class="print-only">
+            <div class="print-summary-row" id="print-total-weight-row">
+                <span>Total Weight:</span>
+                <span id="print-total-weight-val">0.00 kg</span>
+            </div>
+            <div class="print-summary-row" id="print-total-cost-row">
+                <span>Estimated Cost:</span>
+                <span id="print-total-cost-val">₹0.00</span>
+            </div>
+        </div>
+        
+        <!-- Print Settings Modal -->
+        <div id="print-settings-modal" class="modal no-print">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Print Settings</h3>
+                    <span class="close-modal" id="close-settings-x">&times;</span>
+                </div>
+                <div id="print-controls" style="padding: 24px; border: none; box-shadow: none; margin: 0; background: transparent;">
+                    <div class="settings-grid" style="display: grid; gap: 16px;">
+                        <div class="setting-item">
+                            <span class="setting-label">Page Size</span>
+                            <select id="print-page-size" style="width: 120px; height: 36px; padding: 0 8px;">
+                                <option value="A4">A4</option>
+                                <option value="A5">A5</option>
+                                <option value="Letter">Letter</option>
+                                <option value="Legal">Legal</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">Shape</span>
+                            <label class="switch">
+                                <input type="checkbox" id="print-show-shape" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">Weight / Val</span>
+                            <label class="switch">
+                                <input type="checkbox" id="print-show-weight" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">Price</span>
+                            <label class="switch">
+                                <input type="checkbox" id="print-show-price" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">Serial No.</span>
+                            <label class="switch">
+                                <input type="checkbox" id="print-show-sno" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="close-settings-btn" class="secondary-btn">Close</button>
+                    <button id="print-now-btn" class="secondary-btn" style="background-color: var(--primary); color: white; border: none; min-width: 100px;">Print</button>
+                </div>
+            </div>
+        </div>
+
     <div id="print-footer">
             <div class="footer-info">
                 For contact more information, scan this QR code:
@@ -153,19 +274,40 @@
                 <!-- Projects injected here -->
             </ul>
             <div class="modal-footer">
+                <div style="display: flex; gap: 10px; flex: 1;">
+                    <button id="export-json-btn" class="secondary-btn" style="min-width: auto; padding: 0 15px; font-size: 0.85em;">Export</button>
+                    <button id="import-json-btn" class="secondary-btn" style="min-width: auto; padding: 0 15px; font-size: 0.85em;">Import</button>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                </div>
                 <button id="close-modal-btn" class="secondary-btn">Close</button>
             </div>
         </div>
     </div>
 
     <!-- Custom Alert Modal -->
-    <div id="alert-modal" class="modal no-print" style="z-index: 2000;">
-        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 30px;">
-            <div style="margin-bottom: 20px;">
-                <h3 id="alert-title" style="color: var(--primary-color); margin: 0 0 10px 0;">Notice</h3>
-                <p id="alert-message" style="color: #555; font-size: 1.1em; margin: 0;">Message goes here</p>
+    <div id="alert-modal" class="modal no-print">
+        <div class="modal-content">
+            <div style="padding: 24px; text-align: center;">
+                <h3 id="alert-title" style="color: var(--primary); margin: 0 0 10px 0;">Notice</h3>
+                <p id="alert-message" style="color: var(--text-muted); font-size: 1rem; margin: 0;">Message goes here</p>
             </div>
-            <button id="alert-ok-btn" class="primary-btn" style="background-color: var(--primary-color); color: white; width: 100px;">OK</button>
+            <div style="padding: 16px; text-align: center; border-top: 1px solid var(--border); background-color: #F9FAFB;">
+                <button id="alert-ok-btn" style="background-color: var(--primary); color: white; width: 100px;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="confirm-modal" class="modal no-print">
+        <div class="modal-content">
+            <div style="padding: 24px; text-align: center;">
+                <h3 id="confirm-title" style="color: var(--primary); margin: 0 0 10px 0;">Confirm</h3>
+                <p id="confirm-message" style="color: var(--text-muted); font-size: 1rem; margin: 0;">Are you sure?</p>
+            </div>
+            <div style="padding: 16px; text-align: center; border-top: 1px solid var(--border); background-color: #F9FAFB; display: flex; justify-content: center; gap: 12px;">
+                <button id="confirm-cancel-btn" class="secondary-btn" style="width: 100px;">Cancel</button>
+                <button id="confirm-ok-btn" style="background-color: var(--danger); color: white; width: 100px;">Yes</button>
+            </div>
         </div>
     </div>
 

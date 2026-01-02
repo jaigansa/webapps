@@ -6,21 +6,27 @@
 // ====================================================================
 
 const sizeInput = document.getElementById('item-size');
-const sizeInputGroup = sizeInput.parentElement.parentElement; // Adjust for new layout if needed, though simple parentElement is safer usually. Wait, in HTML sizeInput is in .input-group.
-// Actually, let's just stick to element references.
-const sizeInputGroupDiv = document.getElementById('item-size').parentElement; 
+const sizeInputGroupDiv = document.getElementById('item-size').parentElement;
 const lenInput = document.getElementById('item-length');
 const lenGroup = document.getElementById('length-group');
 const list = document.getElementById('material-list');
 const matInput = document.getElementById('item-material');
 const qtyInput = document.getElementById('item-quantity');
-const priceInput = document.getElementById('item-price'); // New
+const priceInput = document.getElementById('item-price');
+const priceTypeInput = document.getElementById('price-type');
 const wtDisplay = document.getElementById('weight-display');
 const shapeInput = document.getElementById('item-shape');
-const shapeIconContainer = document.getElementById('shape-icon'); // New
+const shapeIconContainer = document.getElementById('shape-icon');
 const addButton = document.getElementById('add-button');
 const customInputGroup = document.getElementById('custom-input-group');
 const customDescriptionInput = document.getElementById('custom-description');
+const customDescLabel = document.getElementById('custom-desc-label');
+const transportExtras = document.getElementById('transport-extras');
+const transFrom = document.getElementById('trans-from');
+const transTo = document.getElementById('trans-to');
+const weightValLabel = document.getElementById('weight-val-label');
+const qtyLabel = document.getElementById('qty-label');
+const priceLabel = document.getElementById('price-label');
 const customWeightInput = document.getElementById('custom-weight');
 const customUnitInput = document.getElementById('custom-unit');
 
@@ -35,16 +41,15 @@ const loadBtn = document.getElementById('load-btn');
 const clearBtn = document.getElementById('clear-btn');
 const whatsappBtn = document.getElementById('whatsapp-btn');
 
-
 let selectedData = {};
-// Placeholder assumption for weight/unit input container
-const weightUnitGroup = customWeightInput.parentElement; 
+const weightUnitGroup = customWeightInput.parentElement;
+const unitGroup = customUnitInput.parentElement;
 
 // --- K-FACTORS (Geometric Correction) ---
 const K_FACTORS = {
-    'Angle': 1.02,   
-    'Channel': 1.04, 
-    'IBeam': 1.03,   
+    'Angle': 1.02,
+    'Channel': 1.04,
+    'IBeam': 1.03,
     'SquareRod': 1.0,
     'FlatBar': 1.0,
     'RoundRod': 1.0,
@@ -57,16 +62,45 @@ const K_FACTORS = {
 // === VISUALS & DROPDOWN LOGIC ===
 // ====================================================================
 
+function getShapeLabel(shape) {
+    const shapeObj = shapeInput.querySelector(`option[value="${shape}"]`);
+    return shapeObj ? shapeObj.textContent : shape;
+}
+
+function updateLabels() {
+    const shape = shapeInput.value;
+    const pType = priceTypeInput.value;
+
+    // Default Labels
+    if (qtyLabel) qtyLabel.textContent = 'Qty (Nos)';
+    if (priceLabel) priceLabel.textContent = 'Price (₹)';
+    if (weightValLabel) weightValLabel.textContent = 'Wt / Val';
+    if (customDescLabel) customDescLabel.textContent = 'Custom Description';
+
+    if (shape === 'parts') {
+        if (customDescLabel) customDescLabel.textContent = 'Part Name';
+        if (qtyLabel) qtyLabel.textContent = 'No. of Parts';
+        if (priceLabel) priceLabel.textContent = pType === 'nos' ? 'Price / Part' : 'Price / Kg';
+        if (weightValLabel) weightValLabel.textContent = 'Weight / Part';
+    } else if (shape === 'transport') {
+        if (customDescLabel) customDescLabel.textContent = 'Transport Name';
+        if (priceLabel) priceLabel.textContent = 'Transport Rate';
+    } else if (shape === 'service') {
+        if (customDescLabel) customDescLabel.textContent = 'Service Name';
+        if (priceLabel) priceLabel.textContent = 'Service Charge';
+    } else if (shape === 'custom') {
+        if (priceLabel) priceLabel.textContent = pType === 'nos' ? 'Price / Unit' : 'Price / Kg';
+    }
+}
+
 function updateShapeIcon() {
     const shape = shapeInput.value;
-    const iconName = shape === 'custom' ? 'custom' : 
-                     shape === 'consumables' ? 'consumables' : 
-                     shape; // Map value to filename
+    let iconName = shape;
     
-    // Simple fetch or inject. Since we are local, we can just set innerHTML 
-    // but ideally we'd use <img src> or fetch(). 
-    // Let's use <img src> for simplicity and caching.
-    shapeIconContainer.innerHTML = `<img src="icons/${iconName}.svg" style="width:100%; height:100%;" alt="${shape}">`;
+    if (['parts', 'custom'].includes(shape)) iconName = 'custom';
+    else if (['transport', 'service', 'others', 'consumables'].includes(shape)) iconName = 'consumables'; 
+    
+    shapeIconContainer.innerHTML = `<img src="icons/${iconName}.svg" style="width:100%; height:100%;" alt="${shape}" onerror="this.src='icons/custom.svg'">`;
 }
 
 function updateSizeDropdown() {
@@ -76,29 +110,76 @@ function updateSizeDropdown() {
 
     // Update Icon
     updateShapeIcon();
+    // Update Labels
+    updateLabels();
 
     // Reset visibility of core input groups
     sizeInputGroupDiv.style.display = 'flex';
     customInputGroup.style.display = 'none';
     lenGroup.style.display = 'flex';
     
-    // Ensure weight/unit group is visible by default (for custom/standard mode)
+    // Default visibility for extras
+    if (transportExtras) transportExtras.style.display = 'none';
     if (weightUnitGroup) weightUnitGroup.style.display = 'block';
+    if (unitGroup) unitGroup.style.display = 'block';
+    
+    // Reset inputs
+    transFrom.value = ''; 
+    transTo.value = '';
 
-    if (shape === 'custom') { 
+    if (shape === 'custom' || shape === 'parts') { 
         sizeInputGroupDiv.style.display = 'none';
         lenGroup.style.display = 'none';
         customInputGroup.style.display = 'flex';
         
+        if (shape === 'parts') {
+             customDescriptionInput.placeholder = 'e.g., Hinge, Bolt, Bearing';
+        } else {
+             customDescriptionInput.placeholder = 'e.g., Grinding Wheel';
+        }
+
         customDescriptionInput.value = '';
         customWeightInput.value = '';
         customUnitInput.value = 'kg';
         
+    } else if (['transport', 'service', 'others'].includes(shape)) {
+        sizeInputGroupDiv.style.display = 'none';
+        lenGroup.style.display = 'none';
+        customInputGroup.style.display = 'flex';
+        
+        // Force /No price type for non-weight items to avoid 0 cost error if /Kg was selected
+        if(priceTypeInput) priceTypeInput.value = 'nos';
+        
+        // Hide Weight/Val Inputs for Charges
+        if (weightUnitGroup) weightUnitGroup.style.display = 'none'; 
+        if (unitGroup) unitGroup.style.display = 'none'; 
+        
+        customWeightInput.value = 0;
+        customUnitInput.value = 'nos';
+
+        // Specific setups
+        if (shape === 'transport') {
+            customDescriptionInput.placeholder = 'e.g., Lorry Hire, Tempo';
+            if (transportExtras) {
+                transportExtras.style.display = 'flex';
+            }
+        } else if (shape === 'service') {
+            customDescriptionInput.placeholder = 'e.g., Lathe Work, Bending';
+        } else { // others
+             customDescriptionInput.placeholder = 'e.g., Miscellaneous';
+        }
+
     } else if (shape === 'consumables') {
+        // Force /No for consumables
+        if(priceTypeInput) priceTypeInput.value = 'nos';
         lenGroup.style.display = 'none';
         customInputGroup.style.display = 'flex';
         if (weightUnitGroup) weightUnitGroup.style.display = 'none'; 
+        if (unitGroup) unitGroup.style.display = 'none';
         
+        // Force /No for consumables
+        if(priceTypeInput) priceTypeInput.value = 'nos';
+
         specs.forEach(spec => {
             const opt = document.createElement('option');
             opt.value = JSON.stringify(spec);
@@ -147,13 +228,21 @@ function calculateTotalWeight() {
     let totalWt = 0;
     let unit = 'kg';
 
-    if (shape === 'consumables') { 
+    if (shape === 'consumables' || ['transport', 'service', 'others'].includes(shape)) { 
         totalWt = 0;
         unit = 'N/A';
-    } else if (shape === 'custom') {
+    } else if (shape === 'custom' || shape === 'parts') {
         const customWeight = parseFloat(customWeightInput.value) || 0;
         unit = customUnitInput.value;
-        totalWt = customWeight * qty;
+        
+        if(['kg', 'ton', 'gm'].includes(unit)) {
+             let multiplier = 1;
+             if(unit === 'ton') multiplier = 1000;
+             if(unit === 'gm') multiplier = 0.001;
+             totalWt = customWeight * multiplier * qty;
+        } else {
+             totalWt = 0;
+        }
     } else {
         if (!sizeInput.value) {
             wtDisplay.textContent = 'Approx. 0.00 kg';
@@ -183,7 +272,7 @@ function calculateTotalWeight() {
                 else if (data.type === 'FlatBar' || data.type === 'SquareRod' || data.type === 'Flat') area = H * T; 
                 else if (data.type === 'Tube') area = (H * W) - ((H - 2 * T) * (W - 2 * T)); 
                 else if (data.type === 'Pipe') area = Math.PI * (Math.pow(OD / 2, 2) - Math.pow((OD - 2 * T) / 2, 2)); 
-                else if (data.type === 'Channel') area = (H * T) + 2 * (W - T) * T; 
+                else if (data.type === 'Channel') area = (H * T) + 2 * (W - T) * T;
                 else if (data.type === 'IBeam') area = (H - 2 * T) * T + 2 * W * T; 
 
                 const kFactor = K_FACTORS[data.type] || 1.0;
@@ -195,12 +284,77 @@ function calculateTotalWeight() {
         }
     }
 
-    const displayWtText = (shape === 'consumables' || unit === 'N/A') ? 'N/A' : `${totalWt.toFixed(2)} ${unit}`;
+    // Display Logic
+    let displayWtText = 'N/A';
+    if(shape === 'parts' || shape === 'custom') {
+         const val = customWeightInput.value;
+         const u = customUnitInput.value;
+         displayWtText = (val && u) ? `${val} ${u}` : '0.00 kg';
+    } else if (['transport', 'service', 'others', 'consumables'].includes(shape)) {
+        displayWtText = 'N/A';
+    } else {
+        displayWtText = `${totalWt.toFixed(2)} kg`;
+    }
+    
     wtDisplay.textContent = `Approx. ${displayWtText}`;
     
-    return { weight: (shape === 'consumables' ? 'N/A' : totalWt.toFixed(2)), unit: unit };
+    return { weight: totalWt.toFixed(2), unit: unit, rawVal: customWeightInput.value, rawUnit: customUnitInput.value };
 }
 
+
+// ====================================================================
+// === AUTOSAVE & RESTORE ===
+// ====================================================================
+const AUTOSAVE_KEY = 'matList_autosave';
+
+function saveCurrentState() {
+    if (list.innerHTML.trim() === "") {
+        localStorage.removeItem(AUTOSAVE_KEY);
+    } else {
+        localStorage.setItem(AUTOSAVE_KEY, list.innerHTML);
+    }
+}
+
+function migrateListStructure() {
+    list.querySelectorAll('li .weight-col').forEach(col => {
+        if (!col.querySelector('.weight-val')) {
+             const oldSpan = col.querySelector('span'); 
+             let textPart = '';
+             Array.from(col.childNodes).forEach(node => {
+                if (node.nodeType === 3) textPart += node.textContent; 
+             });
+             
+             const wSpan = document.createElement('span');
+             wSpan.className = 'weight-val';
+             wSpan.textContent = textPart.trim();
+             
+             if (oldSpan) {
+                 oldSpan.classList.add('price-val');
+                 oldSpan.style.display = 'block';
+             }
+             
+             col.innerHTML = '';
+             col.appendChild(wSpan);
+             if (oldSpan) col.appendChild(oldSpan);
+        }
+    });
+}
+
+function restoreState() {
+    const savedHtml = localStorage.getItem(AUTOSAVE_KEY);
+    if (savedHtml) {
+        list.innerHTML = savedHtml;
+        migrateListStructure();
+        // Re-attach listeners to restored items
+        list.querySelectorAll('li .delete-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.remove();
+                updateDashboard();
+            });
+        });
+        updateDashboard();
+    }
+}
 
 // ====================================================================
 // === DASHBOARD & LIST MANAGEMENT ===
@@ -224,27 +378,85 @@ function updateDashboard() {
     totalWeightVal.textContent = totalW.toFixed(2) + ' kg';
     totalItemsVal.textContent = count;
     totalCostVal.textContent = totalC.toFixed(2);
+
+    // Update Print Summary (Sync with dashboard)
+    const printTotalWeight = document.getElementById('print-total-weight-val');
+    const printTotalCost = document.getElementById('print-total-cost-val');
+    if (printTotalWeight) printTotalWeight.textContent = totalW.toFixed(2) + ' kg';
+    if (printTotalCost) printTotalCost.textContent = '₹' + totalC.toFixed(2);
+    
+    saveCurrentState(); // Auto-save on every update
 }
 
 function addItemFromInput() {
     const shape = shapeInput.value;
+    const shapeLabel = getShapeLabel(shape);
     const mat = matInput.value;
-    const qty = parseFloat(qtyInput.value) || 1;
+    const qty = parseFloat(qtyInput.value) || 0;
+    const len = parseFloat(lenInput.value) || 0;
     const price = parseFloat(priceInput.value) || 0;
+    const priceType = priceTypeInput.value; 
+    
+    // --- Validation ---
+    if (qty <= 0) {
+        showAlert("Quantity must be at least 1.");
+        return;
+    }
+    
+    // For shapes that require length
+    const requiresLength = !['sheet', 'plate', 'consumables', 'custom', 'parts', 'transport', 'service', 'others'].includes(shape);
+    if (requiresLength && len <= 0) {
+        showAlert("Please enter a valid Length.");
+        return;
+    }
+    // ------------------
+
     const calc = calculateTotalWeight();
     
-    let name, spec, displayWt, numericWeight;
+    let name, spec, numericWeight = 0;
 
-    if (shape === 'custom') {
-        name = customDescriptionInput.value || 'Custom Item';
+    // 1. Determine Name and Spec
+    if (shape === 'custom' || shape === 'parts') {
+        name = customDescriptionInput.value || (shape === 'parts' ? 'Part' : 'Custom Item');
         const unit = customUnitInput.value;
-        spec = `Weight: ${customWeightInput.value} ${unit}`;
-        numericWeight = (unit === 'kg') ? calc.weight : 0;
-        displayWt = unit === 'kg' ? calc.weight : 'N/A';
+        const val = customWeightInput.value;
+        
+        if(['kg', 'ton', 'gm'].includes(unit)) {
+             numericWeight = parseFloat(calc.weight);
+        } else {
+             numericWeight = 0;
+        }
+        
+        if (shape === 'parts') {
+             spec = (val && unit) ? `Wt/Part: ${val} ${unit}` : '-';
+        } else {
+             spec = (val && unit) ? `Val: ${val} ${unit}` : '-';
+        }
+        
+    } else if (shape === 'transport') {
+        name = customDescriptionInput.value || 'Transport Charge';
+        const fromP = transFrom.value;
+        const toP = transTo.value;
+        spec = (fromP || toP) ? `From: ${fromP || '?'} To: ${toP || '?'}` : '-';
+        numericWeight = 0;
+
+    } else if (shape === 'service') {
+        name = customDescriptionInput.value || 'Service Charge';
+        spec = '-';
+        numericWeight = 0;
+        
+    } else if (shape === 'others') {
+        name = customDescriptionInput.value || 'Other Charge';
+        spec = '-';
+        numericWeight = 0;
+
     } else if (shape === 'consumables') {
         name = customDescriptionInput.value || 'Consumable Item';
-        spec = `Type: ${sizeInput.options[sizeInput.selectedIndex].text}`;
-        displayWt = 'N/A';
+        if (sizeInput.selectedIndex >= 0) {
+            spec = `Type: ${sizeInput.options[sizeInput.selectedIndex].text}`;
+        } else {
+            spec = 'Type: N/A';
+        }
         numericWeight = 0;
     } else {
         if (!sizeInput.value) return;
@@ -254,23 +466,58 @@ function addItemFromInput() {
             spec = `${data.sizeLabel}`;
         } else {
             name = `${mat} ${data.type} ${data.label}`;
-            spec = `Size: ${data.label} | Length: ${lenInput.value} m`;
+            spec = `Length: ${lenInput.value} m`;
         }
-        displayWt = calc.weight;
         numericWeight = parseFloat(calc.weight);
     }
     
-    const cost = (price > 0) ? (price * qty) : 0; // Simple Price * Qty (Assumption: Price is per Unit)
-    // OR if Price is per Kg, we should calculate that. 
-    // Let's assume Price is Per UNIT/NOS for simplicity as per label "Price/Unit".
+    // 2. Determine Display Weight String 
+    let weightDisplayStr = '';
+    if (['transport', 'service', 'others', 'consumables'].includes(shape)) {
+        weightDisplayStr = '-';
+    } else {
+        if (shape === 'custom' || shape === 'parts') {
+             const val = customWeightInput.value;
+             const unit = customUnitInput.value;
+             weightDisplayStr = (val && unit) ? `${val} ${unit}` : '-';
+        } else {
+             weightDisplayStr = `${calc.weight} kg`;
+        }
+    }
+    
+    // 3. Cost Calculation
+    let cost = 0;
+    let priceBasis = '';
+
+    if (price > 0) {
+        if (priceType === 'nos') {
+            cost = price * qty;
+            priceBasis = `@ ₹${price}/no`;
+        } else if (priceType === 'kg') {
+            if (numericWeight > 0) {
+                cost = price * numericWeight;
+                priceBasis = `@ ₹${price}/kg`;
+            } else {
+                cost = 0;
+                priceBasis = `(Wt Req)`;
+            }
+        }
+    }
     
     const li = document.createElement('li');
-    li.dataset.weight = numericWeight; // Store raw number for summation
+    li.dataset.weight = numericWeight || 0; // Store raw number for summation
     li.dataset.cost = cost;
 
     li.innerHTML = `
+        <div class="shape-col"><span class="shape-tag">${shapeLabel}</span></div>
         <div class="item-name">${name}<span class="item-spec">${spec}</span></div>
-        <div class="weight-col">${displayWt} kg<br><span style="font-size:0.8em; color:#2e7d32;">${cost > 0 ? '₹'+cost.toFixed(2) : ''}</span></div>
+        <div class="weight-col">
+            <span class="weight-val">${weightDisplayStr}</span>
+            <span class="price-val" style="display:block; font-size:0.8em; color:#2e7d32;">
+                ${cost > 0 ? '₹'+cost.toFixed(2) : '₹0.00'} 
+                ${priceBasis ? '<br><span style="font-size:0.85em; color:#555;">' + priceBasis + '</span>' : ''}
+            </span>
+        </div>
         <div class="qty-col">${qty} nos</div>
         <div class="delete-button no-print" title="Remove Item">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -292,13 +539,71 @@ function addItemFromInput() {
 
 // Modal Elements
 const loadModal = document.getElementById('load-modal');
-const alertModal = document.getElementById('alert-modal'); // New Alert Modal
+const alertModal = document.getElementById('alert-modal');
 const alertMessage = document.getElementById('alert-message');
 const alertOkBtn = document.getElementById('alert-ok-btn');
 const savedProjectsList = document.getElementById('saved-projects-list');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const closeModalX = document.querySelector('.close-modal');
+const exportJsonBtn = document.getElementById('export-json-btn'); 
+const importJsonBtn = document.getElementById('import-json-btn'); 
+const importFileInput = document.getElementById('import-file-input'); 
 
+// Print Settings Modal Elements
+const printSettingsModal = document.getElementById('print-settings-modal');
+const printSettingsBtn = document.getElementById('print-settings-btn');
+const closeSettingsBtn = document.getElementById('close-settings-btn');
+const closeSettingsX = document.getElementById('close-settings-x');
+const printPageSize = document.getElementById('print-page-size'); // New
+const printNowBtn = document.getElementById('print-now-btn'); // New
+
+// Confirm Modal Elements
+const confirmModal = document.getElementById('confirm-modal');
+const confirmMessage = document.getElementById('confirm-message');
+const confirmOkBtn = document.getElementById('confirm-ok-btn');
+const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+let confirmCallback = null;
+
+// --- Print Settings Logic ---
+function updatePageSize() {
+    const size = printPageSize.value || 'A4';
+    let styleTag = document.getElementById('dynamic-page-size');
+    if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'dynamic-page-size';
+        styleTag.media = 'print';
+        document.head.appendChild(styleTag);
+    }
+    styleTag.textContent = `@page { size: ${size}; margin: 10mm; }`;
+}
+
+if (printPageSize) {
+    printPageSize.addEventListener('change', updatePageSize);
+}
+
+if (printSettingsBtn) {
+    printSettingsBtn.addEventListener('click', () => {
+        printSettingsModal.style.display = 'flex';
+    });
+}
+
+function closeSettings() {
+    printSettingsModal.style.display = 'none';
+}
+
+if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettings);
+if (closeSettingsX) closeSettingsX.addEventListener('click', closeSettings);
+if (printNowBtn) {
+    printNowBtn.addEventListener('click', () => {
+        closeSettings(); // Close first so modal background doesn't potentially glitch
+        window.print();
+    });
+}
+
+// Initialize Page Size
+updatePageSize();
+
+// --- Alert Modal Logic ---
 function showAlert(msg) {
     alertMessage.textContent = msg;
     alertModal.style.display = 'flex';
@@ -310,6 +615,23 @@ function closeAlert() {
 
 alertOkBtn.addEventListener('click', closeAlert);
 
+// --- Confirm Modal Logic ---
+function showConfirm(msg, callback) {
+    confirmMessage.textContent = msg;
+    confirmModal.style.display = 'flex';
+    confirmCallback = callback;
+}
+
+confirmOkBtn.onclick = () => {
+    if (confirmCallback) confirmCallback();
+    confirmModal.style.display = 'none';
+};
+
+confirmCancelBtn.onclick = () => {
+    confirmModal.style.display = 'none';
+};
+
+// --- Load/Save Modal Logic ---
 function openModal() {
     loadModal.style.display = 'flex';
     renderSavedProjects();
@@ -325,7 +647,85 @@ closeModalX.addEventListener('click', closeModal);
 window.addEventListener('click', (event) => {
     if (event.target == loadModal) closeModal();
     if (event.target == alertModal) closeAlert();
+    if (event.target == confirmModal) confirmModal.style.display = 'none';
+    if (event.target == printSettingsModal) closeSettings();
 });
+
+// --- Export / Import Logic ---
+
+function exportJSON() {
+    const projects = localStorage.getItem('matList_projects');
+    if (!projects || projects === '{}') {
+        showAlert("No saved projects to export.");
+        return;
+    }
+    
+    const blob = new Blob([projects], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `material-list-backup-${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function triggerImport() {
+    importFileInput.click();
+}
+
+function importJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            if (typeof importedData !== 'object' || importedData === null) {
+                throw new Error("Invalid JSON structure");
+            }
+
+            const currentData = JSON.parse(localStorage.getItem('matList_projects') || '{}');
+            let addedCount = 0;
+            let overwrittenCount = 0;
+
+            for (const [name, items] of Object.entries(importedData)) {
+                if (currentData[name]) {
+                    // Unique name generation
+                    let newName = name;
+                    let counter = 1;
+                    while (currentData[newName]) {
+                        newName = `${name} (${counter})`;
+                        counter++;
+                    }
+                    currentData[newName] = items;
+                    if(newName !== name) overwrittenCount++; 
+                    addedCount++;
+                } else {
+                    currentData[name] = items;
+                    addedCount++;
+                }
+            }
+
+            localStorage.setItem('matList_projects', JSON.stringify(currentData));
+            showAlert(`Import Successful!\nAdded: ${addedCount} project(s).`);
+            renderSavedProjects(); 
+            
+        } catch (error) {
+            console.error(error);
+            showAlert("Failed to import. Invalid JSON file.");
+        }
+        importFileInput.value = '';
+    };
+    reader.readAsText(file);
+}
+
+exportJsonBtn.addEventListener('click', exportJSON);
+importJsonBtn.addEventListener('click', triggerImport);
+importFileInput.addEventListener('change', importJSON);
 
 
 function saveList() {
@@ -336,7 +736,11 @@ function saveList() {
     }
 
     list.querySelectorAll('li').forEach(li => {
-        items.push(li.innerHTML); 
+        items.push({
+            html: li.innerHTML,
+            w: parseFloat(li.dataset.weight) || 0,
+            c: parseFloat(li.dataset.cost) || 0
+        });
     });
 
     let projectName = prompt("Enter a name for this project:", "My Project");
@@ -344,14 +748,19 @@ function saveList() {
         // Get existing projects
         const projects = JSON.parse(localStorage.getItem('matList_projects') || '{}');
         
-        // Check for overwrite
-        if (projects[projectName] && !confirm(`Project "${projectName}" already exists. Overwrite?`)) {
-            return;
-        }
+        // Define save action
+        const doSave = () => {
+            projects[projectName] = items;
+            localStorage.setItem('matList_projects', JSON.stringify(projects));
+            showAlert(`Project "${projectName}" saved successfully!`);
+        };
 
-        projects[projectName] = items;
-        localStorage.setItem('matList_projects', JSON.stringify(projects));
-        showAlert(`Project "${projectName}" saved successfully!`);
+        // Check for overwrite
+        if (projects[projectName]) {
+            showConfirm(`Project "${projectName}" already exists. Overwrite?`, doSave);
+        } else {
+            doSave();
+        }
     }
 }
 
@@ -388,37 +797,61 @@ function renderSavedProjects() {
 }
 
 function loadProject(name) {
-    if(!confirm(`Load project "${name}"? Current unsaved list will be replaced.`)) return;
+    showConfirm(`Load project "${name}"? Current unsaved list will be replaced.`, () => {
+        const projects = JSON.parse(localStorage.getItem('matList_projects') || '{}');
+        const data = projects[name];
 
-    const projects = JSON.parse(localStorage.getItem('matList_projects') || '{}');
-    const data = projects[name];
-
-    if (data) {
-        list.innerHTML = '';
-        data.forEach(html => {
-            const li = document.createElement('li');
-            li.innerHTML = html;
+        if (data) {
+            list.innerHTML = '';
             
-            // Re-attach listeners
-            li.querySelector('.delete-button').addEventListener('click', function() {
-                this.parentElement.remove();
-                updateDashboard();
+            data.forEach(item => {
+                const li = document.createElement('li');
+                let htmlContent = '';
+                let weight = 0;
+                let cost = 0;
+
+                // Handle New Format (Object) vs Legacy Format (String)
+                if (typeof item === 'object' && item.html) {
+                    htmlContent = item.html;
+                    weight = item.w || 0;
+                    cost = item.c || 0;
+                } else if (typeof item === 'string') {
+                    // Legacy Fallback: Try to parse from HTML string
+                    htmlContent = item;
+                    // Regex to find "1.23 kg" or "₹123.00"
+                    // This is "best effort" for old data
+                    const wMatch = htmlContent.match(/class="weight-val">([\d\.]+)\s*kg/);
+                    const cMatch = htmlContent.match(/₹([\d\.]+)/);
+                    if (wMatch) weight = parseFloat(wMatch[1]);
+                    if (cMatch) cost = parseFloat(cMatch[1]);
+                }
+
+                li.innerHTML = htmlContent;
+                li.dataset.weight = weight;
+                li.dataset.cost = cost;
+                
+                // Re-attach listeners
+                li.querySelector('.delete-button').addEventListener('click', function() {
+                    this.parentElement.remove();
+                    updateDashboard();
+                });
+                list.appendChild(li);
             });
-            list.appendChild(li);
-        });
-        
-        updateDashboard();
-        closeModal();
-    }
+            
+            migrateListStructure();
+            updateDashboard();
+            closeModal();
+        }
+    });
 }
 
 function deleteProject(name) {
-    if(confirm(`Permanently delete project "${name}"?`)) {
+    showConfirm(`Permanently delete project "${name}"?`, () => {
         const projects = JSON.parse(localStorage.getItem('matList_projects') || '{}');
         delete projects[name];
         localStorage.setItem('matList_projects', JSON.stringify(projects));
         renderSavedProjects(); // Refresh list
-    }
+    });
 }
 
 
@@ -432,29 +865,58 @@ function loadList() {
 }
 
 function clearList() {
-    if(confirm('Clear current list?')) {
+    if (list.children.length === 0) return;
+    
+    showConfirm('Clear current list?', () => {
         list.innerHTML = '';
         updateDashboard();
-    }
+    });
 }
 
 function shareWhatsApp() {
-    let text = "*Material List Request*\n\n";
-    let totalW = 0;
+    let text = "*MATERIAL LIST REQUEST*\n";
+    text += "```------------------------------------------```\n";
     
-    list.querySelectorAll('li').forEach(li => {
-        // Parse text content for cleaner sharing
-        const name = li.querySelector('.item-name').innerText.split('\n')[0]; // Name only
+    const items = list.querySelectorAll('li');
+    if (items.length === 0) {
+        showAlert("List is empty. Nothing to share.");
+        return;
+    }
+
+    items.forEach(li => {
+        const shape = li.querySelector('.shape-tag') ? li.querySelector('.shape-tag').innerText : '';
+        const name = li.querySelector('.item-name').innerText.split('\n')[0]; 
         const spec = li.querySelector('.item-spec').innerText;
-        const qty = li.querySelector('.qty-col').innerText;
-        const wt = li.querySelector('.weight-col').innerText.split('\n')[0]; // Weight only
+        const qty = li.querySelector('.qty-col').innerText.replace(' nos', 'nos');
         
-        text += `• ${name} (${qty})\n  ${spec} - ${wt}\n`;
+        // Clean up description (Removed shape prefix as requested)
+        let desc = `${name} ${spec}`
+            .replace(/Size: /g, '')
+            .replace(/Length: /g, ' ')
+            .replace(/Val: /g, '')
+            .replace(/Wt\/Part: /g, '')
+            .replace(/Type: /g, '')
+            .replace(/From: /g, 'F: ')
+            .replace(/To: /g, ' T: ')
+            .replace(/ \| /g, ' ')
+            .trim();
+
+        // Alignment logic for monospaced text
+        const totalWidth = 40; 
+        const dashCount = Math.max(2, totalWidth - desc.length);
+        const line = `${desc}${"-".repeat(dashCount)}${qty}`;
+        
+        text += "```" + line + "```\n";
     });
     
+    text += "```------------------------------------------```\n";
     text += `\n*Total Items:* ${totalItemsVal.textContent}`;
-    text += `\n*Total Weight:* ${totalWeightVal.textContent}`;
-    text += `\n*Est. Cost:* ₹${totalCostVal.textContent}`;
+    text += `
+*Total Weight:* ${totalWeightVal.textContent}`;
+    text += `
+*Est. Cost:* ₹${totalCostVal.textContent}`;
+    text += `
+\n_Generated by Sri Jaiganesh Industry_`;
     
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -495,3 +957,50 @@ sizeInput.addEventListener('change', function() {
 
 // Initial call to set up the dropdowns and calculation display on page load
 updateSizeDropdown();
+
+// ====================================================================
+// === PRINT SETTINGS LOGIC ===
+// ====================================================================
+const printShowShape = document.getElementById('print-show-shape');
+const printShowWeight = document.getElementById('print-show-weight');
+const printShowPrice = document.getElementById('print-show-price');
+const printShowSno = document.getElementById('print-show-sno');
+
+function updatePrintStyles() {
+    // Shape
+    if (!printShowShape.checked) {
+        document.body.classList.add('hide-print-shape');
+    } else {
+        document.body.classList.remove('hide-print-shape');
+    }
+
+    // Weight
+    if (!printShowWeight.checked) {
+        document.body.classList.add('hide-print-weight');
+    } else {
+        document.body.classList.remove('hide-print-weight');
+    }
+
+    // Price
+    if (!printShowPrice.checked) {
+        document.body.classList.add('hide-print-price');
+    } else {
+        document.body.classList.remove('hide-print-price');
+    }
+
+    // Serial Number
+    if (printShowSno.checked) {
+        document.body.classList.add('show-print-sno');
+    } else {
+        document.body.classList.remove('show-print-sno');
+    }
+}
+
+printShowShape.addEventListener('change', updatePrintStyles);
+printShowWeight.addEventListener('change', updatePrintStyles);
+printShowPrice.addEventListener('change', updatePrintStyles);
+printShowSno.addEventListener('change', updatePrintStyles);
+
+// Initialize
+updatePrintStyles();
+restoreState();
