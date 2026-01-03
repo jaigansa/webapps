@@ -20,6 +20,10 @@ const shapeInput = document.getElementById('item-shape');
 const shapeIconContainer = document.getElementById('shape-icon');
 const addButton = document.getElementById('add-button');
 const customInputGroup = document.getElementById('custom-input-group');
+const customSizeInput = document.getElementById('custom-size');
+const customSizeGroup = document.getElementById('custom-size-group');
+const customLengthInput = document.getElementById('custom-length');
+const customLengthGroup = document.getElementById('custom-length-group');
 const customDescriptionInput = document.getElementById('custom-description');
 const customDescLabel = document.getElementById('custom-desc-label');
 const transportExtras = document.getElementById('transport-extras');
@@ -80,7 +84,6 @@ function updateLabels() {
 
     if (shape === 'parts') {
         if (customDescLabel) customDescLabel.textContent = 'Part Name';
-        if (qtyLabel) qtyLabel.textContent = 'No. of Parts';
         if (priceLabel) priceLabel.textContent = pType === 'nos' ? 'Price / Part' : 'Price / Kg';
         if (weightValLabel) weightValLabel.textContent = 'Weight / Part';
     } else if (shape === 'transport') {
@@ -91,6 +94,16 @@ function updateLabels() {
         if (priceLabel) priceLabel.textContent = 'Service Charge';
     } else if (shape === 'custom') {
         if (priceLabel) priceLabel.textContent = pType === 'nos' ? 'Price / Unit' : 'Price / Kg';
+    }
+    
+    // Dynamic Qty Label for Custom/Parts
+    if (shape === 'custom' || shape === 'parts') {
+        const cUnit = customUnitInput.value;
+        if (['nos', 'set', 'roll', 'pkt', 'box', 'lot', 'trip'].includes(cUnit)) {
+             if (qtyLabel) qtyLabel.textContent = `Qty (${cUnit})`;
+        } else {
+             if (qtyLabel) qtyLabel.textContent = 'Qty (Nos)';
+        }
     }
 }
 
@@ -118,11 +131,13 @@ function updateSizeDropdown() {
     sizeInputGroupDiv.style.display = 'flex';
     customInputGroup.style.display = 'none';
     lenGroup.style.display = 'flex';
+    if (customSizeGroup) customSizeGroup.style.display = 'none';
+    if (customLengthGroup) customLengthGroup.style.display = 'none';
     
     // Default visibility for extras
     if (transportExtras) transportExtras.style.display = 'none';
-    if (weightUnitGroup) weightUnitGroup.style.display = 'block';
-    if (unitGroup) unitGroup.style.display = 'block';
+    if (weightUnitGroup) weightUnitGroup.style.display = 'flex';
+    if (unitGroup) unitGroup.style.display = 'flex';
     
     // Reset inputs
     transFrom.value = ''; 
@@ -132,6 +147,8 @@ function updateSizeDropdown() {
         sizeInputGroupDiv.style.display = 'none';
         lenGroup.style.display = 'none';
         customInputGroup.style.display = 'flex';
+        if (customSizeGroup) customSizeGroup.style.display = 'flex';
+        if (customLengthGroup) customLengthGroup.style.display = 'flex';
         
         if (shape === 'parts') {
              customDescriptionInput.placeholder = 'e.g., Hinge, Bolt, Bearing';
@@ -142,6 +159,8 @@ function updateSizeDropdown() {
         customDescriptionInput.value = '';
         customWeightInput.value = '';
         customUnitInput.value = 'kg';
+        if (customSizeInput) customSizeInput.value = '';
+        if (customLengthInput) customLengthInput.value = '';
         
     } else if (['transport', 'service', 'others'].includes(shape)) {
         sizeInputGroupDiv.style.display = 'none';
@@ -437,12 +456,22 @@ function addItemFromInput() {
     const calc = calculateTotalWeight();
     
     let name, spec, numericWeight = 0;
+    let itemTitle = '', itemSize = '', itemLength = '';
 
     // 1. Determine Name and Spec
+    let qtyUnit = 'nos';
+
     if (shape === 'custom' || shape === 'parts') {
         name = customDescriptionInput.value || (shape === 'parts' ? 'Part' : 'Custom Item');
+        itemTitle = name;
+        itemSize = customSizeInput.value || '';
         const unit = customUnitInput.value;
         const val = customWeightInput.value;
+        
+        // Determine Qty Unit
+        if (['nos', 'set', 'roll', 'pkt', 'box', 'lot', 'trip'].includes(unit)) {
+             qtyUnit = unit;
+        }
         
         if(['kg', 'ton', 'gm'].includes(unit)) {
              numericWeight = parseFloat(calc.weight);
@@ -450,14 +479,18 @@ function addItemFromInput() {
              numericWeight = 0;
         }
         
-        if (shape === 'parts') {
-             spec = (val && unit) ? `Wt/Part: ${val} ${unit}` : '-';
-        } else {
-             spec = (val && unit) ? `Val: ${val} ${unit}` : '-';
-        }
+        let specParts = [];
+        if (val && unit) specParts.push(`Val: ${val} ${unit}`);
+        
+        const len = parseFloat(customLengthInput.value) || 0;
+        if (len > 0) specParts.push(`Length: ${len} m`);
+        if (len > 0) itemLength = len;
+        
+        spec = specParts.join(' | ') || '-';
         
     } else if (shape === 'transport') {
         name = customDescriptionInput.value || 'Transport Charge';
+        itemTitle = name;
         const fromP = transFrom.value;
         const toP = transTo.value;
         spec = (fromP || toP) ? `From: ${fromP || '?'} To: ${toP || '?'}` : '-';
@@ -465,16 +498,19 @@ function addItemFromInput() {
 
     } else if (shape === 'service') {
         name = customDescriptionInput.value || 'Service Charge';
+        itemTitle = name;
         spec = '-';
         numericWeight = 0;
         
     } else if (shape === 'others') {
         name = customDescriptionInput.value || 'Other Charge';
+        itemTitle = name;
         spec = '-';
         numericWeight = 0;
 
     } else if (shape === 'consumables') {
         name = customDescriptionInput.value || 'Consumable Item';
+        itemTitle = name;
         if (sizeInput.selectedIndex >= 0) {
             spec = `Type: ${sizeInput.options[sizeInput.selectedIndex].text}`;
         } else {
@@ -484,12 +520,15 @@ function addItemFromInput() {
     } else {
         if (!sizeInput.value) return;
         const data = JSON.parse(sizeInput.value);
+        itemTitle = `${mat} ${data.type}`;
+        itemSize = data.label;
         if (shape === 'sheet' || shape === 'plate') {
-            name = `${mat} ${data.type} ${data.label}`;
+            name = `${itemTitle} ${itemSize}`;
             spec = `${data.sizeLabel}`;
         } else {
-            name = `${mat} ${data.type} ${data.label}`;
+            name = `${itemTitle} ${itemSize}`;
             spec = `Length: ${lenInput.value} m`;
+            itemLength = lenInput.value;
         }
         numericWeight = parseFloat(calc.weight);
     }
@@ -515,7 +554,7 @@ function addItemFromInput() {
     if (price > 0) {
         if (priceType === 'nos') {
             cost = price * qty;
-            priceBasis = `@ ₹${price}/no`;
+            priceBasis = `@ ₹${price}/${qtyUnit === 'nos' ? 'no' : qtyUnit}`;
         } else if (priceType === 'kg') {
             if (numericWeight > 0) {
                 cost = price * numericWeight;
@@ -530,6 +569,9 @@ function addItemFromInput() {
     const li = document.createElement('li');
     li.dataset.weight = numericWeight || 0; // Store raw number for summation
     li.dataset.cost = cost;
+    if (itemTitle) li.dataset.itemTitle = itemTitle;
+    if (itemSize) li.dataset.itemSize = itemSize;
+    if (itemLength) li.dataset.itemLength = itemLength;
 
     li.innerHTML = `
         <div class="shape-col"><span class="shape-tag">${shapeLabel}</span></div>
@@ -541,7 +583,7 @@ function addItemFromInput() {
                 ${priceBasis ? '<br><span style="font-size:0.85em; color:#555;">' + priceBasis + '</span>' : ''}
             </span>
         </div>
-        <div class="qty-col">${qty} nos</div>
+        <div class="qty-col">${qty} ${qtyUnit}</div>
         <div class="delete-button no-print" title="Remove Item">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </div>
@@ -762,7 +804,10 @@ function saveList() {
         items.push({
             html: li.innerHTML,
             w: parseFloat(li.dataset.weight) || 0,
-            c: parseFloat(li.dataset.cost) || 0
+            c: parseFloat(li.dataset.cost) || 0,
+            t: li.dataset.itemTitle || '',
+            s: li.dataset.itemSize || '',
+            l: li.dataset.itemLength || ''
         });
     });
 
@@ -838,6 +883,23 @@ function loadProject(name) {
                     htmlContent = item.html;
                     weight = item.w || 0;
                     cost = item.c || 0;
+                    const itemTitle = item.t || '';
+                    const itemSize = item.s || '';
+                    const itemLength = item.l || '';
+                    
+                    li.innerHTML = htmlContent;
+                    li.dataset.weight = weight;
+                    li.dataset.cost = cost;
+                    if (itemTitle) li.dataset.itemTitle = itemTitle;
+                    if (itemSize) li.dataset.itemSize = itemSize;
+                    
+                    if (itemLength) {
+                        li.dataset.itemLength = itemLength;
+                    } else {
+                        // Fallback: Recover from HTML if dataset missing (for legacy saves)
+                        const lenMatch = htmlContent.match(/Length:\s*([\d\.]+)\s*m/);
+                        if (lenMatch) li.dataset.itemLength = lenMatch[1];
+                    }
                 } else if (typeof item === 'string') {
                     // Legacy Fallback: Try to parse from HTML string
                     htmlContent = item;
@@ -847,11 +909,11 @@ function loadProject(name) {
                     const cMatch = htmlContent.match(/₹([\d\.]+)/);
                     if (wMatch) weight = parseFloat(wMatch[1]);
                     if (cMatch) cost = parseFloat(cMatch[1]);
+                    
+                    li.innerHTML = htmlContent;
+                    li.dataset.weight = weight;
+                    li.dataset.cost = cost;
                 }
-
-                li.innerHTML = htmlContent;
-                li.dataset.weight = weight;
-                li.dataset.cost = cost;
                 
                 // Re-attach listeners
                 li.querySelector('.delete-button').addEventListener('click', function() {
@@ -898,7 +960,7 @@ function clearList() {
 
 function shareWhatsApp() {
     let text = "*MATERIAL LIST REQUEST*\n";
-    text += "```------------------------------------------```\n";
+    text += "------------------------------------------\n";
     
     const items = list.querySelectorAll('li');
     if (items.length === 0) {
@@ -906,40 +968,65 @@ function shareWhatsApp() {
         return;
     }
 
-    items.forEach(li => {
-        const shape = li.querySelector('.shape-tag') ? li.querySelector('.shape-tag').innerText : '';
-        const name = li.querySelector('.item-name').innerText.split('\n')[0]; 
-        const spec = li.querySelector('.item-spec').innerText;
-        const qty = li.querySelector('.qty-col').innerText.replace(' nos', 'nos');
+    items.forEach((li, index) => {
+        const itemTitle = li.dataset.itemTitle || (li.querySelector('.item-name') ? li.querySelector('.item-name').childNodes[0].textContent.trim() : 'Item');
+        const itemSize = (li.dataset.itemSize || '').replace(/ x /g, ' × ');
+        const itemLength = li.dataset.itemLength;
         
-        // Clean up description (Removed shape prefix as requested)
-        let desc = `${name} ${spec}`
-            .replace(/Size: /g, '')
-            .replace(/Length: /g, ' ')
-            .replace(/Val: /g, '')
-            .replace(/Wt\/Part: /g, '')
-            .replace(/Type: /g, '')
-            .replace(/From: /g, 'F: ')
-            .replace(/To: /g, ' T: ')
-            .replace(/ \| /g, ' ')
-            .trim();
+        let spec = li.querySelector('.item-spec') ? li.querySelector('.item-spec').innerText.trim() : '';
+        const weight = li.querySelector('.weight-val') ? li.querySelector('.weight-val').innerText.trim() : '-';
+        const qty = li.querySelector('.qty-col') ? li.querySelector('.qty-col').innerText.replace(' nos', '').trim() : '0';
 
-        // Alignment logic for monospaced text
-        const totalWidth = 40; 
-        const dashCount = Math.max(2, totalWidth - desc.length);
-        const line = `${desc}${"-".repeat(dashCount)}${qty}`;
+        text += `${index + 1}) ${itemTitle}\n`;
         
-        text += "```" + line + "```\n";
+        if (itemSize) {
+            text += `Size   : ${itemSize}\n`;
+        }
+        
+        // Handle Length
+        let printedLength = false;
+        if (itemLength) {
+             text += `Length : ${itemLength} m\n`;
+             printedLength = true;
+             // Remove Length from spec
+             const lenStr = `Length: ${itemLength} m`;
+             if (spec.includes(lenStr)) {
+                 spec = spec.replace(lenStr, '').trim();
+             }
+             spec = spec.replace(' | ', ' ').trim();
+        } 
+        
+        if (!printedLength && spec.startsWith('Length: ')) {
+             text += `Length : ${spec.replace('Length: ', '')}\n`;
+             spec = '';
+        }
+
+        // Handle remaining Spec
+        if (spec && spec !== '-' && spec !== '|') {
+            // Clean up potentially leftover pipe/spaces
+            spec = spec.replace(/^\|\s*/, '').replace(/\s*\|$/, '').trim();
+            
+            if (spec) {
+                if (spec.startsWith('Type: ')) {
+                    text += `Type   : ${spec.replace('Type: ', '')}\n`;
+                } else {
+                    text += `Spec   : ${spec}\n`;
+                }
+            }
+        }
+        
+        text += `Qty    : ${qty}\n`;
+        if (weight && weight !== '-') {
+            text += `Weight : ${weight}\n`;
+        }
+        text += "\n";
     });
     
-    text += "```------------------------------------------```\n";
+    text += "------------------------------------------\n";
     text += `\n*Total Items:* ${totalItemsVal.textContent}`;
-    text += `
-*Total Weight:* ${totalWeightVal.textContent}`;
-    text += `
-*Est. Cost:* ₹${totalCostVal.textContent}`;
-    text += `
-\n_Generated by Sri Jaiganesh Industry_`;
+    text += `\n*Total Weight:* ${totalWeightVal.textContent}`;
+    text += `\n*Est. Cost:* ₹${totalCostVal.textContent}`;
+    text += `\n\n_Generated by Sri Jaiganesh Industry_`;
     
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -961,6 +1048,7 @@ priceTypeInput.addEventListener('change', calculateTotalWeight); // New
 customDescriptionInput.addEventListener('input', calculateTotalWeight);
 customWeightInput.addEventListener('input', calculateTotalWeight);
 customUnitInput.addEventListener('change', calculateTotalWeight);
+customUnitInput.addEventListener('change', updateLabels);
 addButton.addEventListener('click', addItemFromInput);
 
 saveBtn.addEventListener('click', saveList);
